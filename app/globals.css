@@ -1,26 +1,109 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #07111f;
+  --foreground: #e8eef7;
+  --card: #0d1b2e;
+  --muted: #94a3b8;
+  --accent: #22d3ee;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(34, 211, 238, 0.12), transparent 50%),
+    radial-gradient(800px 400px at 90% 0%, rgba(99, 102, 241, 0.12), transparent 45%),
+    var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+.nova-command-overlay {
+  background:
+    radial-gradient(900px 500px at 70% 20%, rgba(34, 211, 238, 0.14), transparent 55%),
+    radial-gradient(700px 400px at 20% 80%, rgba(14, 116, 144, 0.18), transparent 50%),
+    #050b14;
+}
+
+.nova-command-overlay::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 2px,
+    rgba(34, 211, 238, 0.025) 3px
+  );
+  z-index: 1;
+}
+
+.nova-command-overlay > * {
+  position: relative;
+  z-index: 2;
+}
+
+.nova-agent-dock {
+  animation: nova-float 4.5s ease-in-out infinite;
+}
+
+@media (min-width: 1024px) {
+  .nova-agent-dock {
+    bottom: 1.25rem;
+    right: 1.25rem;
+  }
+}
+
+.nova-orbit-node {
+  animation: nova-orbit-pulse 3.2s ease-in-out infinite;
+}
+
+.nova-terminal {
+  box-shadow: inset 0 0 40px rgba(34, 211, 238, 0.08);
+}
+
+@keyframes nova-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes nova-orbit-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.55));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nova-agent-dock,
+  .nova-orbit-node {
+    animation: none;
+  }
 }
