@@ -22,7 +22,7 @@ export interface NavLink {
 }
 
 export const NAV_LINKS: NavLink[] = [
-  { href: "/dashboard", label: "Command", icon: LayoutDashboard, permission: "reports.view" },
+  { href: "/dashboard", label: "Command", icon: LayoutDashboard, permission: "dashboards.command" },
   { href: "/me", label: "My work", icon: Timer },
   { href: "/time", label: "Time", icon: Clock, permission: "time.view" },
   { href: "/projects", label: "Projects", icon: FolderKanban, permission: "projects.view" },
@@ -37,13 +37,25 @@ export const NAV_LINKS: NavLink[] = [
 
 const BOTTOM_SHORTCUTS = ["/projects", "/time", "/nova"] as const;
 
+export function canOpenCommand(can: (permission: string) => boolean) {
+  return can("dashboards.command") || can("projects.delete");
+}
+
+export function userCanOpenCommand(permissions?: string[]) {
+  return Boolean(permissions?.includes("dashboards.command") || permissions?.includes("projects.delete"));
+}
+
 export function visibleNavLinks(can: (permission: string) => boolean): NavLink[] {
-  return NAV_LINKS.filter((link) => !link.permission || can(link.permission) || link.href === "/me");
+  return NAV_LINKS.filter((link) => {
+    if (link.href === "/me") return true;
+    if (link.href === "/dashboard") return canOpenCommand(can);
+    return !link.permission || can(link.permission);
+  });
 }
 
 export function bottomNavItems(can: (permission: string) => boolean): NavLink[] {
-  const home: NavLink = can("reports.view")
-    ? { href: "/dashboard", label: "Home", icon: Home, permission: "reports.view" }
+  const home: NavLink = canOpenCommand(can)
+    ? { href: "/dashboard", label: "Home", icon: Home, permission: "dashboards.command" }
     : { href: "/me", label: "Home", icon: Home };
   const shortcuts = BOTTOM_SHORTCUTS.map((href) => NAV_LINKS.find((link) => link.href === href)!)
     .filter((link) => !link.permission || can(link.permission))

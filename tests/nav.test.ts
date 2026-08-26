@@ -3,8 +3,8 @@ import { test } from "node:test";
 import { bottomNavItems, isNavActive, mobilePageTitle, visibleNavLinks } from "../lib/nav";
 
 const cto = (permission: string) =>
-  ["reports.view", "projects.view", "time.view", "ai.use", "settings.manage"].includes(permission);
-const developer = (permission: string) => ["projects.view", "time.view", "ai.use"].includes(permission);
+  ["dashboards.command", "projects.view", "time.view", "ai.use", "settings.manage"].includes(permission);
+const developer = (permission: string) => ["projects.view", "time.view", "ai.use", "reports.view"].includes(permission);
 
 test("bottom nav for CTO starts at command home and ends with NOVA", () => {
   const items = bottomNavItems(cto);
@@ -23,6 +23,17 @@ test("bottom nav for a developer starts at my work", () => {
   assert.equal(
     visibleNavLinks(developer).some((link) => link.href === "/settings"),
     false,
+  );
+});
+
+test("command is hidden for developers even when they can view reports", () => {
+  assert.equal(
+    visibleNavLinks(developer).some((link) => link.href === "/dashboard"),
+    false,
+  );
+  assert.equal(
+    visibleNavLinks(cto).some((link) => link.href === "/dashboard"),
+    true,
   );
 });
 

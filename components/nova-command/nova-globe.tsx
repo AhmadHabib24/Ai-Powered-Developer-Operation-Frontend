@@ -1,6 +1,6 @@
 "use client";
 
-import { NAV_LINKS } from "@/lib/nav";
+import { visibleNavLinks } from "@/lib/nav";
 import { playNovaHover, playNovaSelect } from "@/lib/nova-audio";
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
@@ -19,7 +19,7 @@ export function NovaGlobe({
 
   const nodes = useMemo(
     () =>
-      NAV_LINKS.filter((link) => !link.permission || user?.permissions?.includes(link.permission) || link.href === "/me").map((link) => ({
+      visibleNavLinks((permission) => Boolean(user?.permissions?.includes(permission))).map((link) => ({
         ...link,
         label: link.href === "/nova" ? `Talk to ${assistant}` : link.label,
       })),

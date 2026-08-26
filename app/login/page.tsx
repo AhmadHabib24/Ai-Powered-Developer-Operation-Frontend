@@ -7,6 +7,7 @@ import { loginSchema } from "@/schemas/auth";
 import { login } from "@/services/auth";
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
+import { userCanOpenCommand } from "@/lib/nav";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -32,7 +33,7 @@ export default function LoginPage() {
       markSignedIn(user);
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       toast.success(`Welcome back, ${user.name}`);
-      router.replace(user.permissions?.includes("projects.delete") ? "/dashboard" : "/me");
+      router.replace(userCanOpenCommand(user.permissions) ? "/dashboard" : "/me");
     },
     onError: (error) => {
       const message = axios.isAxiosError(error)

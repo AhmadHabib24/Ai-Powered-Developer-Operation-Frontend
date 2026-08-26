@@ -7,6 +7,7 @@ import { useNovaCommand } from "@/components/nova-command/nova-command-context";
 import { apiErrorMessage } from "@/lib/api";
 import { useAuth } from "@/providers/auth-provider";
 import { getCtoDashboard } from "@/services/dashboards";
+import { userCanOpenCommand } from "@/lib/nav";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,10 +20,10 @@ export default function CtoDashboardPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["dashboard", "cto"],
     queryFn: getCtoDashboard,
-    enabled: Boolean(user?.permissions?.includes("reports.view")),
+    enabled: userCanOpenCommand(user?.permissions),
   });
 
-  if (user && !user.permissions?.includes("reports.view")) {
+  if (user && !userCanOpenCommand(user.permissions)) {
     return <p className="text-rose-300">You do not have permission to view this.</p>;
   }
 
