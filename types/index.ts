@@ -174,6 +174,7 @@ export interface CodeReview {
   repository_id?: number | null;
   pull_request_id?: number | null;
   commit_sha?: string | null;
+  branch?: string | null;
   status: string;
   trigger: string;
   summary?: string | null;
@@ -375,6 +376,13 @@ export interface GitRemotePullRequest {
   head_sha?: string | null;
   html_url?: string | null;
   opened_at?: string | null;
+}
+
+export interface GitRemoteBranch {
+  name: string;
+  sha: string;
+  protected: boolean;
+  default: boolean;
 }
 
 export interface GitRepository {

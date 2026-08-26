@@ -48,3 +48,11 @@ export async function resolveFinding(findingId: number, resolution: "confirmed" 
   });
   return data.data;
 }
+
+export async function shareCodeReview(id: number | string, payload: { user_ids: number[]; note?: string }) {
+  const { data } = await api.post<{ data: { shared_with: Array<{ id: number; name: string; email: string }> } }>(
+    `/api/v1/code-reviews/${id}/share`,
+    payload,
+  );
+  return data.data;
+}

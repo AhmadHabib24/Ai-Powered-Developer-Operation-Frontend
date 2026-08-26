@@ -7,12 +7,13 @@ import { apiErrorMessage } from "@/lib/api";
 import { useAuth } from "@/providers/auth-provider";
 import {
   getGitOrganization,
+  listOrganizationBranches,
   listOrganizationPullRequests,
   requestOrganizationReview,
   startGithubOAuth,
 } from "@/services/git";
 import { listProjects } from "@/services/projects";
-import type { GitOrgRepository, GitRemotePullRequest } from "@/types";
+import type { GitOrgRepository, GitRemoteBranch, GitRemotePullRequest } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -25,6 +26,7 @@ export function GitWorkspace() {
   const searchParams = useSearchParams();
   const [openId, setOpenId] = useState<string | null>(null);
   const [projectId, setProjectId] = useState<number | "">("");
+  const [branch, setBranch] = useState("");
 
   const catalog = useQuery({
     queryKey: ["git", "organization"],
@@ -41,6 +43,11 @@ export function GitWorkspace() {
     queryFn: () => listOrganizationPullRequests(openId!),
     enabled: Boolean(openId) && can("git.view"),
   });
+  const branches = useQuery({
+    queryKey: ["git", "organization", "branches", openId],
+    queryFn: () => listOrganizationBranches(openId!),
+    enabled: Boolean(openId) && can("git.view"),
+  });
 
   useEffect(() => {
     if (searchParams.get("git") === "connected") {
@@ -48,6 +55,12 @@ export function GitWorkspace() {
       queryClient.invalidateQueries({ queryKey: ["git"] });
     }
   }, [searchParams, queryClient]);
+
+  useEffect(() => {
+    if (!openId || !branches.data?.length || branch) return;
+    const selected = branches.data.find((item) => item.default)?.name ?? branches.data[0]?.name ?? "";
+    setBranch(selected);
+  }, [openId, branches.data, branch]);
 
   const connectOauth = useMutation({
     mutationFn: () => startGithubOAuth(),
@@ -58,10 +71,11 @@ export function GitWorkspace() {
   });
 
   const review = useMutation({
-    mutationFn: (payload: { externalId: string; pull_request_number?: number; project_id?: number }) =>
+    mutationFn: (payload: { externalId: string; pull_request_number?: number; project_id?: number; branch?: string }) =>
       requestOrganizationReview(payload.externalId, {
         pull_request_number: payload.pull_request_number,
         project_id: payload.project_id,
+        branch: payload.branch,
       }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["git"] });
@@ -88,10 +102,15 @@ export function GitWorkspace() {
       setOpenId(repo.external_id);
       return;
     }
+    if (!pullRequestNumber && !branch) {
+      toast.error("Pick the branch you want reviewed.");
+      return;
+    }
     review.mutate({
       externalId: repo.external_id,
       pull_request_number: pullRequestNumber,
       project_id: needsProject ? Number(projectId) : undefined,
+      branch: pullRequestNumber ? undefined : branch,
     });
   }
 
@@ -178,14 +197,19 @@ export function GitWorkspace() {
               repo={repo}
               open={openId === repo.external_id}
               onToggle={() => {
-                setOpenId((current) => (current === repo.external_id ? null : repo.external_id));
+                const next = openId === repo.external_id ? null : repo.external_id;
+                setOpenId(next);
+                setBranch("");
                 if (!repo.linked) setProjectId("");
               }}
               projectId={projectId}
               onProjectId={setProjectId}
               projects={projects.data?.data ?? []}
               pullRequests={openId === repo.external_id ? (pullRequests.data ?? []) : []}
-              pullsLoading={openId === repo.external_id && pullRequests.isLoading}
+              branches={openId === repo.external_id ? (branches.data ?? []) : []}
+              detailsLoading={openId === repo.external_id && (pullRequests.isLoading || branches.isLoading)}
+              branch={branch}
+              onBranch={setBranch}
               canConnect={can("git.connect")}
               canReview={can("code_review.manage")}
               reviewing={review.isPending}
@@ -206,7 +230,10 @@ function RepoRow({
   onProjectId,
   projects,
   pullRequests,
-  pullsLoading,
+  branches,
+  detailsLoading,
+  branch,
+  onBranch,
   canConnect,
   canReview,
   reviewing,
@@ -219,12 +246,17 @@ function RepoRow({
   onProjectId: (value: number | "") => void;
   projects: Array<{ id: number; name: string }>;
   pullRequests: GitRemotePullRequest[];
-  pullsLoading: boolean;
+  branches: GitRemoteBranch[];
+  detailsLoading: boolean;
+  branch: string;
+  onBranch: (value: string) => void;
   canConnect: boolean;
   canReview: boolean;
   reviewing: boolean;
   onReview: (pullRequestNumber?: number) => void;
 }) {
+  const blocked = reviewing || (!repo.linked && !projectId);
+
   return (
     <div className="rounded-xl bg-white/5">
       <div className="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -287,34 +319,56 @@ function RepoRow({
               )}
             </div>
           )}
-          {pullsLoading && <p className="text-sm text-slate-400">Loading open pull requests…</p>}
-          {!pullsLoading && pullRequests.length === 0 && (
-            <p className="text-sm text-slate-400">No open pull requests. Review will use the default branch HEAD.</p>
-          )}
-          {pullRequests.map((pr) => (
-            <div key={pr.number} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-black/20 px-3 py-2">
-              <div>
-                <p className="text-sm font-medium">
-                  #{pr.number} {pr.title}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {pr.author_login}
-                  {pr.head_branch ? ` · ${pr.head_branch}` : ""}
-                </p>
-              </div>
-              <Button size="sm" disabled={reviewing || (!repo.linked && !projectId)} onClick={() => onReview(pr.number)}>
-                Review PR
-              </Button>
+          {detailsLoading && <p className="text-sm text-slate-400">Loading branches and pull requests…</p>}
+          {!detailsLoading && (
+            <div className="space-y-2">
+              <label className="text-xs uppercase tracking-wide text-slate-500">Branch to review</label>
+              {branches.length === 0 ? (
+                <p className="text-sm text-slate-400">No branches were returned for this repository.</p>
+              ) : (
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <select
+                    className="h-10 min-w-0 flex-1 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm"
+                    value={branch}
+                    onChange={(event) => onBranch(event.target.value)}
+                  >
+                    {branches.map((item) => (
+                      <option key={item.name} value={item.name}>
+                        {item.name}
+                        {item.default ? " (default)" : ""}
+                        {item.protected ? " · protected" : ""}
+                      </option>
+                    ))}
+                  </select>
+                  <Button size="sm" disabled={blocked || !branch} onClick={() => onReview()}>
+                    {reviewing ? "Queueing…" : `Review ${branch || "branch"}`}
+                  </Button>
+                </div>
+              )}
+              <p className="text-xs text-slate-500">{branches.length} branch{branches.length === 1 ? "" : "es"} on GitHub.</p>
             </div>
-          ))}
-          <Button
-            size="sm"
-            variant="secondary"
-            disabled={reviewing || (!repo.linked && !projectId)}
-            onClick={() => onReview()}
-          >
-            {reviewing ? "Queueing…" : pullRequests.length ? "Review default branch instead" : "Review default branch"}
-          </Button>
+          )}
+          {!detailsLoading && pullRequests.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-wide text-slate-500">Open pull requests</p>
+              {pullRequests.map((pr) => (
+                <div key={pr.number} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-black/20 px-3 py-2">
+                  <div>
+                    <p className="text-sm font-medium">
+                      #{pr.number} {pr.title}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {pr.author_login}
+                      {pr.head_branch ? ` · ${pr.head_branch}` : ""}
+                    </p>
+                  </div>
+                  <Button size="sm" variant="secondary" disabled={blocked} onClick={() => onReview(pr.number)}>
+                    Review PR
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

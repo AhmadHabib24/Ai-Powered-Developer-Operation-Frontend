@@ -7,6 +7,7 @@ import type {
   GitOrganizationCatalog,
   GitProviderStatus,
   GitPullRequest,
+  GitRemoteBranch,
   GitRemotePullRequest,
   GitRemoteRepository,
   GitRepository,
@@ -77,9 +78,16 @@ export async function listOrganizationPullRequests(externalId: string) {
   return data.data;
 }
 
+export async function listOrganizationBranches(externalId: string) {
+  const { data } = await api.get<{ data: GitRemoteBranch[] }>(
+    `/api/v1/git/organization/repositories/${externalId}/branches`,
+  );
+  return data.data;
+}
+
 export async function requestOrganizationReview(
   externalId: string,
-  payload: { project_id?: number; pull_request_number?: number; commit_sha?: string },
+  payload: { project_id?: number; pull_request_number?: number; commit_sha?: string; branch?: string },
 ) {
   const { data } = await api.post<{ data: CodeReview }>(`/api/v1/git/organization/repositories/${externalId}/reviews`, payload);
   return data.data;

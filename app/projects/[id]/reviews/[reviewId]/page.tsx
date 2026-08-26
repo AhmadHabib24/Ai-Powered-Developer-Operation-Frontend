@@ -3,12 +3,16 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { apiErrorMessage } from "@/lib/api";
 import { useAuth } from "@/providers/auth-provider";
-import { getCodeReview, resolveFinding } from "@/services/reviews";
+import { getProject } from "@/services/projects";
+import { getCodeReview, resolveFinding, shareCodeReview } from "@/services/reviews";
+import { listUsers } from "@/services/users";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const severityTone: Record<string, string> = {
@@ -21,12 +25,30 @@ const severityTone: Record<string, string> = {
 
 export default function CodeReviewDetailPage() {
   const params = useParams<{ id: string; reviewId: string }>();
-  const { can } = useAuth();
+  const { can, user } = useAuth();
   const queryClient = useQueryClient();
+  const [selected, setSelected] = useState<number[]>([]);
+  const [note, setNote] = useState("");
+
   const { data: review, isLoading, error } = useQuery({
     queryKey: ["code-review", params.reviewId],
     queryFn: () => getCodeReview(params.reviewId),
   });
+  const project = useQuery({
+    queryKey: ["project", params.id],
+    queryFn: () => getProject(params.id),
+  });
+  const directory = useQuery({
+    queryKey: ["users"],
+    queryFn: () => listUsers(),
+    enabled: can("users.view"),
+  });
+
+  const people = useMemo(() => {
+    const rows = [...(directory.data?.data ?? []), ...(project.data?.members ?? [])];
+    if (project.data?.owner) rows.push(project.data.owner);
+    return [...new Map(rows.filter((person) => person.id !== user?.id).map((person) => [person.id, person])).values()];
+  }, [directory.data, project.data, user?.id]);
 
   const resolve = useMutation({
     mutationFn: ({ findingId, resolution }: { findingId: number; resolution: "confirmed" | "dismissed" }) =>
@@ -38,29 +60,92 @@ export default function CodeReviewDetailPage() {
     onError: (err) => toast.error(apiErrorMessage(err, "Could not update the finding.")),
   });
 
+  const share = useMutation({
+    mutationFn: () => shareCodeReview(params.reviewId, { user_ids: selected, note: note || undefined }),
+    onSuccess: (data) => {
+      setSelected([]);
+      setNote("");
+      toast.success(`Shared with ${data.shared_with.map((person) => person.name).join(", ")}.`);
+    },
+    onError: (err) => toast.error(apiErrorMessage(err, "Could not share this review.")),
+  });
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("Review link copied.");
+    } catch {
+      toast.error("Could not copy the link.");
+    }
+  }
+
   if (error) return <p className="text-rose-300">{apiErrorMessage(error, "Unable to load this review.")}</p>;
   if (isLoading || !review) return <p className="text-slate-400">Loading review…</p>;
 
   return (
     <div className="space-y-6">
-      <div>
-        <Link href={`/projects/${params.id}/reviews`} className="text-sm text-cyan-300">
-          Back to reviews
-        </Link>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-semibold sm:text-3xl">Review #{review.id}</h1>
-          <Badge>{review.status}</Badge>
-          {review.blocked && <Badge tone="red">merge gate</Badge>}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <Link href={`/projects/${params.id}/reviews`} className="text-sm text-cyan-300">
+            Back to reviews
+          </Link>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-semibold sm:text-3xl">Review #{review.id}</h1>
+            <Badge>{review.status}</Badge>
+            {review.blocked && <Badge tone="red">merge gate</Badge>}
+          </div>
+          <p className="mt-2 max-w-3xl text-sm text-slate-400">{review.summary}</p>
+          <p className="mt-1 text-xs text-slate-500">
+            {review.trigger}
+            {review.branch ? ` · ${review.branch}` : ""}
+            {review.commit_sha ? ` · ${review.commit_sha.slice(0, 10)}` : ""}
+            {review.pull_request ? ` · PR #${review.pull_request.number}` : ""}
+            {review.provider ? ` · ${review.provider}` : ""}
+          </p>
+          {review.error && <p className="mt-2 text-sm text-rose-300">{review.error}</p>}
         </div>
-        <p className="mt-2 max-w-3xl text-sm text-slate-400">{review.summary}</p>
-        <p className="mt-1 text-xs text-slate-500">
-          {review.trigger}
-          {review.commit_sha ? ` · ${review.commit_sha.slice(0, 10)}` : ""}
-          {review.pull_request ? ` · PR #${review.pull_request.number}` : ""}
-          {review.provider ? ` · ${review.provider}` : ""}
-        </p>
-        {review.error && <p className="mt-2 text-sm text-rose-300">{review.error}</p>}
+        <Button size="sm" variant="secondary" onClick={copyLink}>
+          Copy link
+        </Button>
       </div>
+      <Card>
+        <CardTitle>Share</CardTitle>
+        <p className="mt-2 text-sm text-slate-400">Send this review to teammates. They get an in-app notification and email with the link.</p>
+        {people.length === 0 ? (
+          <p className="mt-3 text-sm text-slate-500">Add people to this project first, then you can share the review.</p>
+        ) : (
+          <div className="mt-3 space-y-3">
+            <div className="grid gap-2 sm:grid-cols-2">
+              {people.map((person) => (
+                <label key={person.id} className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm">
+                  <input
+                    type="checkbox"
+                    className="accent-cyan-400"
+                    checked={selected.includes(person.id)}
+                    onChange={(event) => {
+                      setSelected((current) =>
+                        event.target.checked ? [...current, person.id] : current.filter((id) => id !== person.id),
+                      );
+                    }}
+                  />
+                  <span>
+                    {person.name}
+                    <span className="block text-xs text-slate-500">{person.email}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+            <Input
+              placeholder="Optional note, for example: please check auth on develop"
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+            />
+            <Button size="sm" disabled={selected.length === 0 || share.isPending} onClick={() => share.mutate()}>
+              {share.isPending ? "Sharing…" : "Share review"}
+            </Button>
+          </div>
+        )}
+      </Card>
       <Card>
         <CardTitle>Findings</CardTitle>
         <div className="mt-4 space-y-3">
