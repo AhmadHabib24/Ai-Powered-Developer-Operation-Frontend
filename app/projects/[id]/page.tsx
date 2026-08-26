@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { formatDate } from "@/lib/utils";
+import { apiErrorMessage } from "@/lib/api";
 import { useAuth } from "@/providers/auth-provider";
 import { taskSchema } from "@/schemas/auth";
-import { createTask, getProject, listProjectTasks } from "@/services/projects";
+import { createTask, getProject, listProjectTasks, updateProject } from "@/services/projects";
 import { assignTask, changeTaskStatus } from "@/services/tasks";
 import { listUsers } from "@/services/users";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +23,15 @@ import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
+
+const PROJECT_STATUSES = [
+  { value: "draft", label: "Draft" },
+  { value: "planning", label: "Planning" },
+  { value: "active", label: "Active" },
+  { value: "on_hold", label: "On hold" },
+  { value: "completed", label: "Completed" },
+  { value: "archived", label: "Archived" },
+] as const;
 
 export default function ProjectDetailPage() {
   const params = useParams<{ id: string }>();
@@ -44,6 +54,16 @@ export default function ProjectDetailPage() {
       toast.success("Task created");
     },
   });
+  const statusMutation = useMutation({
+    mutationFn: (status: string) => updateProject(params.id, { status }),
+    onSuccess: (updated) => {
+      queryClient.setQueryData(["project", params.id], updated);
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      toast.success(`Status set to ${updated.status.replace("_", " ")}`);
+    },
+    onError: (error) => toast.error(apiErrorMessage(error, "Could not update project status.")),
+  });
 
   if (isLoading || !project) return <p className="text-slate-400">Loading project…</p>;
 
@@ -61,8 +81,26 @@ export default function ProjectDetailPage() {
               <Link href={`/nova?project_id=${project.id}`}>Talk to NOVA</Link>
             </Button>
           )}
-          <Badge>{project.status}</Badge>
-          <Badge tone={project.health}>{project.health}</Badge>
+          {can("projects.update") ? (
+            <select
+              aria-label="Project status"
+              className="h-8 rounded-full border border-white/10 bg-slate-950 px-3 text-xs capitalize"
+              value={project.status}
+              disabled={statusMutation.isPending}
+              onChange={(event) => statusMutation.mutate(event.target.value)}
+            >
+              {PROJECT_STATUSES.map((status) => (
+                <option key={status.value} value={status.value}>
+                  {status.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <Badge>{project.status.replace("_", " ")}</Badge>
+          )}
+          <Badge tone={project.health} className="capitalize">
+            {project.health}
+          </Badge>
         </div>
       </div>
       <Card>
