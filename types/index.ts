@@ -80,6 +80,22 @@ export interface Project {
   overdue_tasks_count?: number;
 }
 
+export interface TaskAssignment {
+  id: number;
+  status: "pending" | "accepted" | "declined" | string;
+  assigned_at?: string | null;
+  responded_at?: string | null;
+  assigned_by?: User | null;
+}
+
+export interface TaskAttachment {
+  id: number;
+  original_name: string;
+  mime_type: string;
+  size_bytes: number;
+  created_at: string;
+}
+
 export interface Task {
   id: number;
   project_id: number;
@@ -100,8 +116,12 @@ export interface Task {
   suggested_assignee?: User | null;
   assignment_confidence?: number | string | null;
   assignment_reason?: string | null;
+  assignment_status?: "pending" | "accepted" | "declined" | string | null;
+  assignment?: TaskAssignment | null;
+  project?: { id: number; name: string; status?: string | null } | null;
   creator?: User | null;
   comments?: { id: number; body: string; user?: User; created_at: string }[];
+  attachments?: TaskAttachment[];
 }
 
 export interface RequirementDocument {
@@ -298,6 +318,19 @@ export interface TimeSummary {
   today_seconds: number;
   week_seconds: number;
   month_seconds: number;
+  task_count?: number;
+  average_seconds?: number;
+  average_hours?: number;
+  by_task?: Array<{
+    task_id: number;
+    project_id: number;
+    task?: string | null;
+    project?: string | null;
+    estimated_hours?: number | string | null;
+    sessions: number;
+    seconds: number;
+    hours: number;
+  }>;
 }
 
 export interface DeveloperDashboard {
@@ -306,6 +339,7 @@ export interface DeveloperDashboard {
     today: Task[];
     in_progress: Task[];
     blocked: number;
+    pending_assignments?: Task[];
     recent: Task[];
   };
   timer: {

@@ -22,6 +22,7 @@ export const taskSchema = z.object({
   priority: z.enum(["critical", "high", "medium", "low"]),
   estimated_hours: z.coerce.number().min(0).optional(),
   due_date: z.string().optional(),
+  assignee_id: z.string().optional(),
 });
 
 export const workModeSchema = z.object({

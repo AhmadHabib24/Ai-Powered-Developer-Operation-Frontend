@@ -8,6 +8,7 @@ import { formatDate, formatDuration, formatHours } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 import { adjustTimeEntry, createManualEntry, getTimeSummary, listTimeEntries } from "@/services/time";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -73,10 +74,13 @@ export default function TimePage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Time tracking</p>
-        <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Entries and totals</h1>
+        <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Time report</p>
+        <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Hours by task</h1>
+        <p className="mt-2 max-w-2xl text-sm text-slate-400">
+          This is not the task list. It shows who spent time where: averages, task totals, and the raw entries underneath.
+        </p>
       </div>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardTitle>Today</CardTitle>
           <p className="mt-2 text-3xl">{formatHours(summary.today_seconds)}</p>
@@ -89,7 +93,34 @@ export default function TimePage() {
           <CardTitle>This month</CardTitle>
           <p className="mt-2 text-3xl">{formatHours(summary.month_seconds)}</p>
         </Card>
+        <Card>
+          <CardTitle>Average / task</CardTitle>
+          <p className="mt-2 text-3xl">{formatHours(summary.average_seconds ?? 0)}</p>
+          <p className="mt-1 text-xs text-slate-500">{summary.task_count ?? 0} task(s) this period</p>
+        </Card>
       </div>
+      <Card>
+        <CardTitle>Time by task</CardTitle>
+        <div className="mt-4 space-y-2">
+          {(summary.by_task ?? []).length === 0 && <p className="text-sm text-slate-400">No time recorded in this period.</p>}
+          {(summary.by_task ?? []).map((row) => (
+            <Link
+              key={row.task_id}
+              href={`/tasks/${row.task_id}`}
+              className="flex flex-col gap-1 rounded-xl bg-white/5 px-4 py-3 hover:bg-white/10 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div>
+                <p className="font-medium">{row.task ?? `Task #${row.task_id}`}</p>
+                <p className="text-xs text-slate-400">
+                  {row.project ?? `Project #${row.project_id}`} · {row.sessions} session(s)
+                  {row.estimated_hours ? ` · ${row.estimated_hours}h allocated` : ""}
+                </p>
+              </div>
+              <p className="font-mono text-sm">{formatHours(row.seconds)}</p>
+            </Link>
+          ))}
+        </div>
+      </Card>
       {can("time.manage") && (
         <Card>
           <CardTitle>Manual entry</CardTitle>
@@ -117,6 +148,7 @@ export default function TimePage() {
                   <p className="text-xs text-slate-400">
                     {formatDate(entry.started_at)} · {entry.work_mode} · {entry.source}
                     {entry.user?.name ? ` · ${entry.user.name}` : ""}
+                    {entry.task?.project_id ? ` · project #${entry.task.project_id}` : ""}
                   </p>
                 </div>
                 <div className="text-right">

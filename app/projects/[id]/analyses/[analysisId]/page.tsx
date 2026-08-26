@@ -20,6 +20,10 @@ export default function AnalysisReviewPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["analysis", params.analysisId],
     queryFn: () => getAnalysis(params.analysisId),
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      return status === "queued" || status === "processing" ? 2000 : false;
+    },
   });
   const [jsonText, setJsonText] = useState("");
 
@@ -71,6 +75,12 @@ export default function AnalysisReviewPage() {
         </div>
         <Badge>{data.status}</Badge>
       </div>
+      {(data.status === "queued" || data.status === "processing") && (
+        <p className="text-sm text-amber-200">Analysis is still running. This page will refresh when the draft is ready.</p>
+      )}
+      {data.status === "failed" && (
+        <p className="text-sm text-rose-300">{data.error || "Analysis failed. Try a text-based PDF, TXT, or MD file."}</p>
+      )}
       <Card>
         <CardTitle>Proposed structure</CardTitle>
         <div className="mt-4 space-y-3 text-sm">

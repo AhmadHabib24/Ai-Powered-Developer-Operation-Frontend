@@ -5,6 +5,7 @@ import {
   GitBranch,
   Home,
   LayoutDashboard,
+  ListTodo,
   MessageSquareText,
   Settings,
   ShieldCheck,
@@ -24,8 +25,9 @@ export interface NavLink {
 export const NAV_LINKS: NavLink[] = [
   { href: "/dashboard", label: "Command", icon: LayoutDashboard, permission: "dashboards.command" },
   { href: "/me", label: "My work", icon: Timer },
-  { href: "/time", label: "Time", icon: Clock, permission: "time.view" },
   { href: "/projects", label: "Projects", icon: FolderKanban, permission: "projects.view" },
+  { href: "/tasks", label: "Tasks", icon: ListTodo, permission: "tasks.view" },
+  { href: "/time", label: "Time", icon: Clock, permission: "time.view" },
   { href: "/git", label: "Git", icon: GitBranch, permission: "git.view" },
   { href: "/teams", label: "Teams", icon: UsersRound, permission: "teams.view" },
   { href: "/people", label: "People", icon: Users, permission: "users.view" },
@@ -68,7 +70,8 @@ export function isNavActive(pathname: string, href: string) {
 }
 
 export function mobilePageTitle(pathname: string, appName: string, assistant: string) {
-  if (pathname.startsWith("/tasks")) return "Task";
+  if (pathname === "/tasks") return "Tasks";
+  if (pathname.startsWith("/tasks/")) return "Task";
   if (pathname.startsWith("/projects")) return "Projects";
   const match = [...NAV_LINKS].sort((a, b) => b.href.length - a.href.length).find((link) => isNavActive(pathname, link.href));
   if (!match) return appName;

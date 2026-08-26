@@ -26,7 +26,7 @@ export async function listProjectTasks(projectId: number | string, params?: Reco
   return data;
 }
 
-export async function createTask(projectId: number | string, payload: Partial<Task> & { title: string }) {
+export async function createTask(projectId: number | string, payload: Partial<Task> & { title: string; assignee_id?: number }) {
   const { data } = await api.post<{ data: Task }>(`/api/v1/projects/${projectId}/tasks`, payload);
   return data.data;
 }

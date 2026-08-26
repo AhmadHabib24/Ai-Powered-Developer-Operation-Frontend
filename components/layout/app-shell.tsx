@@ -1,5 +1,6 @@
 "use client";
 
+import { AssignmentInboxModal } from "@/components/tasks/assignment-inbox-modal";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { LayoutNavProvider } from "@/components/layout/layout-nav-context";
@@ -41,6 +42,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <MobileDrawer />
             <BottomNav />
             <CommandPalette />
+            <AssignmentInboxModal />
           </div>
         </LayoutNavProvider>
       )}

@@ -40,19 +40,27 @@ export default function ProjectDetailPage() {
   const { data: project, isLoading } = useQuery({ queryKey: ["project", params.id], queryFn: () => getProject(params.id) });
   const { data: tasks } = useQuery({ queryKey: ["project-tasks", params.id], queryFn: () => listProjectTasks(params.id) });
   const { data: users } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => listUsers(),
-    enabled: can("users.view"),
+    queryKey: ["users", "assign"],
+    queryFn: () => listUsers({ per_page: "100" }),
+    enabled: can("users.view") || can("tasks.assign"),
   });
-  const form = useForm<z.infer<typeof taskSchema>>({ resolver: zodResolver(taskSchema), defaultValues: { priority: "medium" } });
+  const form = useForm<z.infer<typeof taskSchema>>({ resolver: zodResolver(taskSchema), defaultValues: { priority: "medium", assignee_id: "" } });
 
   const createMutation = useMutation({
-    mutationFn: (values: z.infer<typeof taskSchema>) => createTask(params.id, values),
+    mutationFn: (values: z.infer<typeof taskSchema>) =>
+      createTask(params.id, {
+        ...values,
+        assignee_id: values.assignee_id ? Number(values.assignee_id) : undefined,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["project-tasks", params.id] });
-      form.reset({ priority: "medium" });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["assignments"] });
+  form.reset({ priority: "medium", assignee_id: "" });
       toast.success("Task created");
     },
+    onError: (error) => toast.error(apiErrorMessage(error, "Could not create the task.")),
   });
   const statusMutation = useMutation({
     mutationFn: (status: string) => updateProject(params.id, { status }),
@@ -121,6 +129,14 @@ export default function ProjectDetailPage() {
               <option value="medium">Medium</option>
               <option value="low">Low</option>
             </select>
+            <select className="h-10 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm" {...form.register("assignee_id")}>
+              <option value="">Assign later</option>
+              {(users?.data ?? project.members ?? []).map((person) => (
+                <option key={person.id} value={person.id}>
+                  {person.name}
+                </option>
+              ))}
+            </select>
             <textarea className="md:col-span-2 min-h-20 rounded-lg border border-white/10 bg-white/5 p-3 text-sm" placeholder="Description" {...form.register("description")} />
             <Button disabled={createMutation.isPending}>Create task</Button>
           </form>
@@ -141,7 +157,10 @@ export default function ProjectDetailPage() {
                 <Link href={`/tasks/${task.id}`} className="font-medium hover:text-cyan-200">
                   {task.title}
                 </Link>
-                <p className="text-xs text-slate-400">{task.assignee?.name ?? "Unassigned"} · {task.estimated_hours ?? 0}h</p>
+                <p className="text-xs text-slate-400">
+                  {task.assignee?.name ?? "Unassigned"} · {task.estimated_hours ?? 0}h
+                  {task.assignment_status ? ` · ${task.assignment_status}` : ""}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge tone={task.is_overdue ? "red" : "slate"}>{task.status.replace("_", " ")}</Badge>
@@ -168,10 +187,15 @@ export default function ProjectDetailPage() {
                     defaultValue={task.assignee?.id ?? ""}
                     onChange={(event) => {
                       if (!event.target.value) return;
-                      assignTask(task.id, Number(event.target.value)).then(() => {
-                        queryClient.invalidateQueries({ queryKey: ["project-tasks", params.id] });
-                        toast.success("Assigned");
-                      });
+                      assignTask(task.id, Number(event.target.value))
+                        .then(() => {
+                          queryClient.invalidateQueries({ queryKey: ["project-tasks", params.id] });
+                          queryClient.invalidateQueries({ queryKey: ["tasks"] });
+                          queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+                          queryClient.invalidateQueries({ queryKey: ["assignments"] });
+                          toast.success("Assigned. They must receive or decline it.");
+                        })
+                        .catch((error) => toast.error(apiErrorMessage(error, "Could not assign.")));
                     }}
                   >
                     <option value="">Assign</option>

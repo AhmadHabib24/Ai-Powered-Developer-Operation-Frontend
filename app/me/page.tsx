@@ -70,8 +70,8 @@ export default function DeveloperHomePage() {
           <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Developer workspace</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Today’s work</h1>
         </div>
-        <Link className="text-sm text-cyan-300" href="/performance">
-          Performance
+        <Link className="text-sm text-cyan-300" href="/tasks">
+          All tasks
         </Link>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
@@ -122,6 +122,20 @@ export default function DeveloperHomePage() {
           </div>
         </Card>
       </div>
+      {(data.tasks.pending_assignments ?? []).length > 0 && (
+        <Card>
+          <CardTitle>Waiting for you</CardTitle>
+          <p className="mt-2 text-sm text-slate-400">Receive or decline these assignments. They also appear as a popup after login.</p>
+          <div className="mt-4 space-y-2">
+            {data.tasks.pending_assignments!.map((task) => (
+              <Link key={task.id} href={`/tasks/${task.id}`} className="block rounded-xl bg-white/5 px-4 py-3 hover:bg-white/10">
+                <p className="font-medium">{task.title}</p>
+                <p className="text-xs text-slate-400">{task.project?.name ?? `Project #${task.project_id}`}</p>
+              </Link>
+            ))}
+          </div>
+        </Card>
+      )}
       <Card>
         <CardTitle>In progress</CardTitle>
         <div className="mt-4 space-y-2">
@@ -155,12 +169,15 @@ export default function DeveloperHomePage() {
                 <Link href={`/tasks/${task.id}`} className="font-medium hover:text-cyan-200">
                   {task.title}
                 </Link>
-                <p className="text-xs text-slate-400">{task.estimated_hours ?? 0}h estimate</p>
+                <p className="text-xs text-slate-400">
+                  {task.project?.name ?? `Project #${task.project_id}`} · {task.estimated_hours ?? 0}h estimate
+                  {task.assignment_status === "pending" ? " · waiting for you to receive" : ""}
+                </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge>{task.status.replace("_", " ")}</Badge>
                 {session?.task_id === task.id && <Badge tone="green">Timing</Badge>}
-                {["todo", "in_progress", "blocked", "in_review", "qa"].includes(task.status) && session?.task_id !== task.id && (
+                {["todo", "in_progress", "blocked", "in_review", "qa"].includes(task.status) && session?.task_id !== task.id && task.assignment_status !== "pending" && (
                   <Button size="sm" onClick={() => startMutation.mutate(task.id)} disabled={startMutation.isPending}>
                     Start timer
                   </Button>

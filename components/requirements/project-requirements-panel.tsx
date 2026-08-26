@@ -8,11 +8,13 @@ import { useAuth } from "@/providers/auth-provider";
 import { analyzeDocument, listRequirementDocuments, uploadRequirementDocument } from "@/services/requirements";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
   const { can } = useAuth();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [file, setFile] = useState<File | null>(null);
   const { data: documents } = useQuery({
@@ -20,23 +22,42 @@ export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
     queryFn: () => listRequirementDocuments(projectId),
   });
 
+  const runAnalyze = async (documentId: number) => {
+    const analysis = await analyzeDocument(documentId);
+    queryClient.invalidateQueries({ queryKey: ["requirements", projectId] });
+    if (analysis.status === "failed") {
+      throw new Error(analysis.error || "Analysis failed.");
+    }
+    toast.success("Analysis ready for review");
+    router.push(`/projects/${projectId}/analyses/${analysis.id}`);
+    return analysis;
+  };
+
   const upload = useMutation({
-    mutationFn: () => uploadRequirementDocument(projectId, file!),
-    onSuccess: () => {
+    mutationFn: async () => {
+      const document = await uploadRequirementDocument(projectId, file!);
+      if (document.extraction_status !== "ready") {
+        return document;
+      }
+      if (can("ai.use")) {
+        await runAnalyze(document.id);
+      }
+      return document;
+    },
+    onSuccess: (document) => {
       setFile(null);
       queryClient.invalidateQueries({ queryKey: ["requirements", projectId] });
-      toast.success("Document uploaded and text extracted");
+      if (document.extraction_status !== "ready") {
+        toast.error(document.extraction_error || "Text could not be extracted from this file.");
+      } else if (!can("ai.use")) {
+        toast.success("Document uploaded and text extracted");
+      }
     },
-    onError: (error) => toast.error(apiErrorMessage(error, "Upload failed.")),
+    onError: (error) => toast.error(apiErrorMessage(error, "Upload or analysis failed.")),
   });
 
   const analyze = useMutation({
-    mutationFn: (documentId: number) => analyzeDocument(documentId),
-    onSuccess: (analysis) => {
-      queryClient.invalidateQueries({ queryKey: ["requirements", projectId] });
-      toast.success("Analysis ready for review");
-      window.location.href = `/projects/${projectId}/analyses/${analysis.id}`;
-    },
+    mutationFn: (documentId: number) => runAnalyze(documentId),
     onError: (error) => toast.error(apiErrorMessage(error, "Analysis failed.")),
   });
 
@@ -55,7 +76,7 @@ export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
             onChange={(event) => setFile(event.target.files?.[0] ?? null)}
           />
           <Button size="sm" disabled={!file || upload.isPending} onClick={() => upload.mutate()}>
-            Upload
+            {can("ai.use") ? "Upload and analyze" : "Upload"}
           </Button>
         </div>
       )}
@@ -66,11 +87,14 @@ export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
             <div>
               <p className="font-medium">{document.original_name}</p>
               <p className="text-xs text-slate-400">{document.extension} · {Math.round(document.size_bytes / 1024)} KB</p>
+              {document.extraction_error && <p className="mt-1 text-xs text-rose-300">{document.extraction_error}</p>}
             </div>
             <div className="flex items-center gap-2">
-              <Badge tone={document.extraction_status === "ready" ? "green" : "yellow"}>{document.extraction_status}</Badge>
+              <Badge tone={document.extraction_status === "ready" ? "green" : document.extraction_status === "failed" ? "red" : "yellow"}>
+                {document.extraction_status}
+              </Badge>
               {can("ai.use") && document.extraction_status === "ready" && (
-                <Button size="sm" disabled={analyze.isPending} onClick={() => analyze.mutate(document.id)}>
+                <Button size="sm" disabled={analyze.isPending || upload.isPending} onClick={() => analyze.mutate(document.id)}>
                   Analyze
                 </Button>
               )}

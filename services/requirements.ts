@@ -16,7 +16,9 @@ export async function uploadRequirementDocument(projectId: number | string, file
 }
 
 export async function analyzeDocument(documentId: number) {
-  const { data } = await api.post<{ data: RequirementAnalysis }>(`/api/v1/documents/${documentId}/analyze`);
+  const { data } = await api.post<{ data: RequirementAnalysis }>(`/api/v1/documents/${documentId}/analyze`, undefined, {
+    timeout: 120_000,
+  });
   return data.data;
 }
 
