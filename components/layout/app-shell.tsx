@@ -15,19 +15,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const isPublic = pathname.startsWith("/login") || pathname.startsWith("/forgot") || pathname.startsWith("/reset");
 
   useEffect(() => {
-    if (!isLoading && !user && !pathname.startsWith("/login") && !pathname.startsWith("/forgot") && !pathname.startsWith("/reset")) {
+    if (isLoading) return;
+    if (!user && !isPublic) {
       router.replace("/login");
     }
-  }, [isLoading, user, pathname, router]);
+  }, [isLoading, user, isPublic, router]);
 
   return (
     <NovaCommandProvider>
-      {isLoading ? (
-        <div className="grid min-h-dvh place-items-center text-slate-400">Loading workspace…</div>
-      ) : !user ? (
+      {isPublic || (!isLoading && !user) ? (
         children
+      ) : isLoading ? (
+        <div className="grid min-h-dvh place-items-center text-slate-400">Loading workspace…</div>
       ) : (
         <LayoutNavProvider>
           <div className="flex min-h-dvh">

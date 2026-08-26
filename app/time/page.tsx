@@ -12,10 +12,18 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function TimePage() {
-  const { can } = useAuth();
+  const { can, isLoading: authLoading } = useAuth();
   const queryClient = useQueryClient();
-  const { data: summary, isLoading: summaryLoading } = useQuery({ queryKey: ["time", "summary"], queryFn: () => getTimeSummary() });
-  const { data: entries, isLoading: entriesLoading, error } = useQuery({ queryKey: ["time", "entries"], queryFn: () => listTimeEntries() });
+  const { data: summary, isLoading: summaryLoading } = useQuery({
+    queryKey: ["time", "summary"],
+    queryFn: () => getTimeSummary(),
+    enabled: can("time.view"),
+  });
+  const { data: entries, isLoading: entriesLoading, error } = useQuery({
+    queryKey: ["time", "entries"],
+    queryFn: () => listTimeEntries(),
+    enabled: can("time.view"),
+  });
   const [adjusting, setAdjusting] = useState<number | null>(null);
   const [deltaMinutes, setDeltaMinutes] = useState("15");
   const [reason, setReason] = useState("");
@@ -57,6 +65,8 @@ export default function TimePage() {
     onError: (err) => toast.error(apiErrorMessage(err, "Could not create the entry.")),
   });
 
+  if (authLoading) return <p className="text-slate-400">Loading time…</p>;
+  if (!can("time.view")) return <p className="text-rose-300">You do not have permission to view this.</p>;
   if (error) return <p className="text-rose-300">{apiErrorMessage(error, "Unable to load time entries.")}</p>;
   if (summaryLoading || entriesLoading || !summary) return <p className="text-slate-400">Loading time…</p>;
 

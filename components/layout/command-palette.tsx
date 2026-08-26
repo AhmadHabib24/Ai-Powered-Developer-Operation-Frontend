@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
+import { visibleNavLinks } from "@/lib/nav";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -14,16 +15,11 @@ export function CommandPalette() {
   const assistant = branding.data?.assistant_name ?? "NOVA";
 
   const commands = [
-    { label: "Go to command center", href: "/dashboard" },
-    { label: "My work", href: "/me" },
-    { label: "Time log", href: "/time" },
-    { label: "Projects", href: "/projects" },
-    ...(can("git.view") ? [{ label: "Git repositories", href: "/git" }] : []),
-    { label: "New project", href: "/projects/new" },
-    { label: "Teams", href: "/teams" },
-    { label: "Performance", href: "/performance" },
-    { label: `Talk to ${assistant}`, href: "/nova" },
-    ...(can("settings.manage") ? [{ label: "Settings", href: "/settings" }] : []),
+    ...visibleNavLinks(can).map((link) => ({
+      label: link.href === "/nova" ? `Talk to ${assistant}` : link.label,
+      href: link.href,
+    })),
+    ...(can("projects.create") ? [{ label: "New project", href: "/projects/new" }] : []),
   ];
 
   useEffect(() => {

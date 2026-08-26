@@ -2,19 +2,16 @@
 
 import { NotificationBell } from "@/components/layout/notification-bell";
 import { Button } from "@/components/ui/button";
-import { logout } from "@/services/auth";
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
 import { mobilePageTitle } from "@/lib/nav";
 import { Mic, Search } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 
 export function Topbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const branding = useBranding();
   const assistant = branding.data?.assistant_name ?? "NOVA";
   const appName = branding.data?.app_name ?? process.env.NEXT_PUBLIC_APP_NAME ?? "NOVA";
@@ -51,9 +48,8 @@ export function Topbar() {
           className="hidden lg:inline-flex"
           variant="outline"
           onClick={async () => {
-            await logout();
-            queryClient.clear();
-            router.push("/login");
+            await signOut();
+            router.replace("/login");
           }}
         >
           Sign out

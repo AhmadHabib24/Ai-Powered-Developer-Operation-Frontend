@@ -6,18 +6,15 @@ import { Button } from "@/components/ui/button";
 import { useNovaCommand } from "@/components/nova-command/nova-command-context";
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
-import { logout } from "@/services/auth";
-import { useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function MobileDrawer() {
   const { menuOpen, setMenuOpen } = useLayoutNav();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const branding = useBranding();
   const { canEngage, setOpen } = useNovaCommand();
   const router = useRouter();
-  const queryClient = useQueryClient();
   const appName = branding.data?.app_name ?? process.env.NEXT_PUBLIC_APP_NAME ?? "NOVA";
   const assistant = branding.data?.assistant_name ?? "NOVA";
 
@@ -65,9 +62,8 @@ export function MobileDrawer() {
             variant="outline"
             onClick={async () => {
               setMenuOpen(false);
-              await logout();
-              queryClient.clear();
-              router.push("/login");
+              await signOut();
+              router.replace("/login");
             }}
           >
             Sign out

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { loginSchema } from "@/schemas/auth";
 import { login } from "@/services/auth";
+import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -21,13 +22,14 @@ type FormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { markSignedIn } = useAuth();
   const branding = useBranding();
   const appName = branding.data?.app_name ?? "NOVA";
   const form = useForm<FormValues>({ resolver: zodResolver(loginSchema) });
   const mutation = useMutation({
     mutationFn: (values: FormValues) => login(values.email, values.password),
     onSuccess: async (user) => {
-      queryClient.setQueryData(["me"], user);
+      markSignedIn(user);
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       toast.success(`Welcome back, ${user.name}`);
       router.replace(user.permissions?.includes("projects.delete") ? "/dashboard" : "/me");

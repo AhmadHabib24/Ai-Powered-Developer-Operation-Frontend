@@ -5,17 +5,24 @@ import { NovaCommandContext } from "@/components/nova-command/nova-command-conte
 import { NovaCommandOverlay } from "@/components/nova-command/nova-command-overlay";
 import { isNovaAudioMuted, setNovaAudioMuted, unlockNovaAudio } from "@/lib/nova-audio";
 import { useAuth } from "@/providers/auth-provider";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export function NovaCommandProvider({ children }: { children: React.ReactNode }) {
   const { can, user } = useAuth();
-  const canEngage = Boolean(user) && can("projects.delete") && can("reports.view");
+  const pathname = usePathname();
+  const isPublic = pathname.startsWith("/login") || pathname.startsWith("/forgot") || pathname.startsWith("/reset");
+  const canEngage = Boolean(user) && !isPublic && can("projects.delete") && can("reports.view");
   const [open, setOpen] = useState(false);
   const [muted, setMuted] = useState(false);
 
   useEffect(() => {
     setMuted(isNovaAudioMuted());
   }, []);
+
+  useEffect(() => {
+    if (!canEngage) setOpen(false);
+  }, [canEngage]);
 
   useEffect(() => {
     if (!open) return;

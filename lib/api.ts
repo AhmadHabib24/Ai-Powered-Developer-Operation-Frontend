@@ -27,6 +27,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
       clearToken();
+      window.dispatchEvent(new Event("nova:session-ended"));
     }
     return Promise.reject(error);
   },
@@ -46,6 +47,11 @@ export function apiErrorMessage(error: unknown, fallback = "Request failed") {
     }
     if (error.response?.status === 419 || code === "CSRF_MISMATCH") {
       return "Security token expired. Refresh and sign in again.";
+    }
+    const errors = error.response?.data?.errors;
+    if (errors && typeof errors === "object") {
+      const first = Object.values(errors as Record<string, unknown>).flat()[0];
+      if (typeof first === "string") return first;
     }
     return error.response?.data?.message ?? fallback;
   }

@@ -19,8 +19,12 @@ export default function CtoDashboardPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["dashboard", "cto"],
     queryFn: getCtoDashboard,
-    enabled: Boolean(user),
+    enabled: Boolean(user?.permissions?.includes("reports.view")),
   });
+
+  if (user && !user.permissions?.includes("reports.view")) {
+    return <p className="text-rose-300">You do not have permission to view this.</p>;
+  }
 
   if (!user || isLoading) return <p className="text-slate-400">Loading command center…</p>;
   if (error || !data) return <p className="text-rose-300">{apiErrorMessage(error, "Unable to load the command center.")}</p>;

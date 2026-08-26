@@ -28,6 +28,24 @@ export interface UserSkill {
   years_experience: number | string;
 }
 
+export interface AccessRole {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  is_system: boolean;
+  users_count?: number;
+  permissions: string[];
+}
+
+export interface CatalogPermission {
+  id: number;
+  name: string;
+  slug: string;
+  group: string;
+  description?: string | null;
+}
+
 export interface Team {
   id: number;
   name: string;

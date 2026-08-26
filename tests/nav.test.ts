@@ -26,6 +26,18 @@ test("bottom nav for a developer starts at my work", () => {
   );
 });
 
+test("roles link is only visible with roles.view", () => {
+  assert.equal(
+    visibleNavLinks(developer).some((link) => link.href === "/roles"),
+    false,
+  );
+  const ctoWithRoles = (permission: string) => cto(permission) || permission === "roles.view";
+  assert.equal(
+    visibleNavLinks(ctoWithRoles).some((link) => link.href === "/roles"),
+    true,
+  );
+});
+
 test("nav active matching uses prefix without colliding on /me", () => {
   assert.equal(isNavActive("/projects/12", "/projects"), true);
   assert.equal(isNavActive("/performance", "/me"), false);

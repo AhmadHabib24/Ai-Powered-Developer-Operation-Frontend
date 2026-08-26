@@ -10,8 +10,13 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
 export default function ProjectsPage() {
-  const { can } = useAuth();
-  const { data, isLoading } = useQuery({ queryKey: ["projects"], queryFn: () => listProjects() });
+  const { can, isLoading: authLoading } = useAuth();
+  const { data, isLoading } = useQuery({ queryKey: ["projects"], queryFn: () => listProjects(), enabled: can("projects.view") });
+
+  if (authLoading) return <p className="text-slate-400">Loading projects…</p>;
+  if (!can("projects.view")) {
+    return <p className="text-rose-300">You do not have permission to view this.</p>;
+  }
 
   return (
     <div className="space-y-6">

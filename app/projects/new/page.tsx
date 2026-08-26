@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/providers/auth-provider";
 import { projectSchema } from "@/schemas/auth";
 import { createProject } from "@/services/projects";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +14,7 @@ import { toast } from "sonner";
 import type { z } from "zod";
 
 export default function NewProjectPage() {
+  const { can, isLoading } = useAuth();
   const router = useRouter();
   const form = useForm<z.infer<typeof projectSchema>>({ resolver: zodResolver(projectSchema) });
   const mutation = useMutation({
@@ -23,6 +25,11 @@ export default function NewProjectPage() {
     },
     onError: () => toast.error("Could not create project"),
   });
+
+  if (isLoading) return <p className="text-slate-400">Loading…</p>;
+  if (!can("projects.create")) {
+    return <p className="text-rose-300">You do not have permission to create projects.</p>;
+  }
 
   return (
     <Card className="mx-auto max-w-xl space-y-5">
