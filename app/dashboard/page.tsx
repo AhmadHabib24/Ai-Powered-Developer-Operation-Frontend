@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { useNovaCommand } from "@/components/nova-command/nova-command-context";
 import { apiErrorMessage } from "@/lib/api";
+import { useAuth } from "@/providers/auth-provider";
 import { getCtoDashboard } from "@/services/dashboards";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -13,10 +14,15 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recha
 
 export default function CtoDashboardPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const { setOpen, canEngage } = useNovaCommand();
-  const { data, isLoading, error } = useQuery({ queryKey: ["dashboard", "cto"], queryFn: getCtoDashboard });
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["dashboard", "cto"],
+    queryFn: getCtoDashboard,
+    enabled: Boolean(user),
+  });
 
-  if (isLoading) return <p className="text-slate-400">Loading command center…</p>;
+  if (!user || isLoading) return <p className="text-slate-400">Loading command center…</p>;
   if (error || !data) return <p className="text-rose-300">{apiErrorMessage(error, "Unable to load the command center.")}</p>;
 
   const chart = Object.entries(data.task_status ?? {}).map(([name, total]) => ({ name, total }));

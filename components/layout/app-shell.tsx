@@ -22,26 +22,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
   }, [isLoading, user, pathname, router]);
 
-  if (isLoading) {
-    return <div className="grid min-h-dvh place-items-center text-slate-400">Loading workspace…</div>;
-  }
-
-  if (!user) return <>{children}</>;
-
   return (
     <NovaCommandProvider>
-      <LayoutNavProvider>
-        <div className="flex min-h-dvh">
-          <Sidebar />
-          <div className="flex min-w-0 flex-1 flex-col">
-            <Topbar />
-            <main className="min-w-0 flex-1 overflow-x-hidden p-4 pb-[calc(5.75rem+env(safe-area-inset-bottom))] lg:p-6">{children}</main>
+      {isLoading ? (
+        <div className="grid min-h-dvh place-items-center text-slate-400">Loading workspace…</div>
+      ) : !user ? (
+        children
+      ) : (
+        <LayoutNavProvider>
+          <div className="flex min-h-dvh">
+            <Sidebar />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <Topbar />
+              <main className="min-w-0 flex-1 overflow-x-hidden p-4 pb-[calc(5.75rem+env(safe-area-inset-bottom))] lg:p-6">{children}</main>
+            </div>
+            <MobileDrawer />
+            <BottomNav />
+            <CommandPalette />
           </div>
-          <MobileDrawer />
-          <BottomNav />
-          <CommandPalette />
-        </div>
-      </LayoutNavProvider>
+        </LayoutNavProvider>
+      )}
     </NovaCommandProvider>
   );
 }
