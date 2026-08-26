@@ -1,10 +1,13 @@
 import api from "@/lib/api";
 import type {
+  CodeReview,
   GitCommit,
   GitIdentity,
   GitIntegration,
+  GitOrganizationCatalog,
   GitProviderStatus,
   GitPullRequest,
+  GitRemotePullRequest,
   GitRemoteRepository,
   GitRepository,
   Paginated,
@@ -59,5 +62,25 @@ export async function listGitIdentities() {
 
 export async function saveGitIdentity(login: string, email?: string) {
   const { data } = await api.post<{ data: GitIdentity }>("/api/v1/git/identities", { login, email });
+  return data.data;
+}
+
+export async function getGitOrganization() {
+  const { data } = await api.get<{ data: GitOrganizationCatalog }>("/api/v1/git/organization");
+  return data.data;
+}
+
+export async function listOrganizationPullRequests(externalId: string) {
+  const { data } = await api.get<{ data: GitRemotePullRequest[] }>(
+    `/api/v1/git/organization/repositories/${externalId}/pull-requests`,
+  );
+  return data.data;
+}
+
+export async function requestOrganizationReview(
+  externalId: string,
+  payload: { project_id?: number; pull_request_number?: number; commit_sha?: string },
+) {
+  const { data } = await api.post<{ data: CodeReview }>(`/api/v1/git/organization/repositories/${externalId}/reviews`, payload);
   return data.data;
 }

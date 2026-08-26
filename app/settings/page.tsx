@@ -204,6 +204,15 @@ export default function SettingsPage() {
           <div>
             <CardTitle className="text-base text-white">{activeGroup.title}</CardTitle>
             <p className="mt-1 text-sm text-slate-400">{activeGroup.description}</p>
+            {activeGroup.id === "git" && (
+              <p className="mt-2 text-sm text-cyan-200">
+                Organization, OAuth, and token values on this screen are what the{" "}
+                <a href="/git" className="underline hover:text-cyan-100">
+                  Git workspace
+                </a>{" "}
+                uses to list repos and start code reviews.
+              </p>
+            )}
           </div>
           {logoField && (
             <div className="space-y-2">

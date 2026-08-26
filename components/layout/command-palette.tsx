@@ -18,6 +18,7 @@ export function CommandPalette() {
     { label: "My work", href: "/me" },
     { label: "Time log", href: "/time" },
     { label: "Projects", href: "/projects" },
+    ...(can("git.view") ? [{ label: "Git repositories", href: "/git" }] : []),
     { label: "New project", href: "/projects/new" },
     { label: "Teams", href: "/teams" },
     { label: "Performance", href: "/performance" },

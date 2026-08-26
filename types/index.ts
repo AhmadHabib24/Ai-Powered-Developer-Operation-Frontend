@@ -310,6 +310,7 @@ export interface DeveloperDashboard {
 export interface GitProviderStatus {
   name: string;
   configured: boolean;
+  token_configured?: boolean;
   app_configured: boolean;
   default: boolean;
   organization?: string | null;
@@ -332,6 +333,48 @@ export interface GitRemoteRepository {
   default_branch: string;
   html_url?: string | null;
   private?: boolean;
+  description?: string | null;
+  language?: string | null;
+  pushed_at?: string | null;
+}
+
+export interface GitOrgRepository extends GitRemoteRepository {
+  linked: boolean;
+  webhook_status?: string | null;
+  open_pull_requests: number;
+  reviews_count: number;
+  linked_project?: {
+    id: number;
+    name: string;
+    slug?: string;
+    ai_review_enabled?: boolean;
+  } | null;
+}
+
+export interface GitOrganizationCatalog {
+  organization?: string | null;
+  organization_url?: string | null;
+  oauth_configured: boolean;
+  token_configured: boolean;
+  connected: boolean;
+  integration_id?: number | null;
+  list_error?: string | null;
+  repository_count: number;
+  repositories: GitOrgRepository[];
+}
+
+export interface GitRemotePullRequest {
+  external_id: string;
+  number: number;
+  title: string;
+  author_login?: string | null;
+  status: string;
+  draft: boolean;
+  base_branch?: string | null;
+  head_branch?: string | null;
+  head_sha?: string | null;
+  html_url?: string | null;
+  opened_at?: string | null;
 }
 
 export interface GitRepository {

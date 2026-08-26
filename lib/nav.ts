@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   Clock,
   FolderKanban,
+  GitBranch,
   Home,
   LayoutDashboard,
   MessageSquareText,
@@ -24,6 +25,7 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/me", label: "My work", icon: Timer },
   { href: "/time", label: "Time", icon: Clock, permission: "time.view" },
   { href: "/projects", label: "Projects", icon: FolderKanban, permission: "projects.view" },
+  { href: "/git", label: "Git", icon: GitBranch, permission: "git.view" },
   { href: "/teams", label: "Teams", icon: UsersRound, permission: "teams.view" },
   { href: "/people", label: "People", icon: Users, permission: "users.view" },
   { href: "/performance", label: "Performance", icon: Trophy, permission: "performance.view" },

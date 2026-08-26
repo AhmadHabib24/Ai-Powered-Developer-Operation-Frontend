@@ -8,6 +8,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { connectProjectRepository, getGitProviders, listGitIntegrations, listProjectCommits, listProjectPullRequests, listProjectRepositories, listRemoteRepositories, startGithubOAuth } from "@/services/git";
 import { requestCodeReview } from "@/services/reviews";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -94,14 +95,28 @@ export function ProjectGitPanel({ projectId }: { projectId: string }) {
             <a className="text-cyan-300 hover:text-cyan-200" href={github.organization_url ?? `https://github.com/${github.organization}`} target="_blank" rel="noreferrer">
               {github.organization}
             </a>
-            . Developers push there. NOVA records commits and PRs after a repo is linked.
+            . Developers push there. NOVA records commits and PRs after a repo is linked.{" "}
+            {can("git.view") && (
+              <Link className="text-cyan-300 hover:text-cyan-200" href="/git">
+                Open all {github.organization} repositories
+              </Link>
+            )}
           </p>
         )}
         {!github?.configured && (
           <p className="mt-2 text-sm text-amber-200">
             GitHub OAuth is not configured yet. A CTO with Settings access must create an OAuth App on{" "}
-            <a className="underline" href="https://github.com/organizations/TecVeq-Solutions/settings/applications" target="_blank" rel="noreferrer">
-              TecVeq-Solutions
+            <a
+              className="underline"
+              href={
+                github?.organization
+                  ? `https://github.com/organizations/${github.organization}/settings/applications`
+                  : "https://github.com/settings/developers"
+              }
+              target="_blank"
+              rel="noreferrer"
+            >
+              {github?.organization ?? "GitHub"}
             </a>{" "}
             and paste the client ID and secret into Settings → GitHub. Callback URL:{" "}
             <code className="text-amber-100">/api/v1/git/github/oauth/callback</code>
