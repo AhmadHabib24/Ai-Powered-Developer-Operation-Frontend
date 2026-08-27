@@ -38,7 +38,11 @@ export default function ProjectDetailPage() {
   const { can } = useAuth();
   const queryClient = useQueryClient();
   const { data: project, isLoading } = useQuery({ queryKey: ["project", params.id], queryFn: () => getProject(params.id) });
-  const { data: tasks } = useQuery({ queryKey: ["project-tasks", params.id], queryFn: () => listProjectTasks(params.id) });
+  const { data: tasks } = useQuery({
+    queryKey: ["project-tasks", params.id],
+    queryFn: () => listProjectTasks(params.id),
+    refetchInterval: 4000,
+  });
   const { data: users } = useQuery({
     queryKey: ["users", "assign"],
     queryFn: () => listUsers({ per_page: "100" }),
@@ -161,8 +165,16 @@ export default function ProjectDetailPage() {
                   {task.assignee?.name ?? "Unassigned"} · {task.estimated_hours ?? 0}h
                   {task.assignment_status ? ` · ${task.assignment_status}` : ""}
                 </p>
+                {task.latest_comment && (
+                  <p className="mt-1 truncate text-xs text-cyan-200">{task.latest_comment.user?.name}: {task.latest_comment.body}</p>
+                )}
               </div>
               <div className="flex items-center gap-2">
+                {task.live_timer && (
+                  <Badge tone={task.over_allocation ? "red" : "green"}>
+                    {task.live_timer.user?.name ?? "Working"}
+                  </Badge>
+                )}
                 <Badge tone={task.is_overdue ? "red" : "slate"}>{task.status.replace("_", " ")}</Badge>
                 {can("tasks.update") && (
                   <select
@@ -183,8 +195,10 @@ export default function ProjectDetailPage() {
                 )}
                 {can("tasks.assign") && (
                   <select
-                    className="h-8 rounded-lg border border-white/10 bg-slate-950 px-2 text-xs"
+                    className="h-8 rounded-lg border border-white/10 bg-slate-950 px-2 text-xs disabled:opacity-50"
                     defaultValue={task.assignee?.id ?? ""}
+                    disabled={task.transfer_locked}
+                    title={task.transfer_locked ? "Cannot transfer while a timer is running" : undefined}
                     onChange={(event) => {
                       if (!event.target.value) return;
                       assignTask(task.id, Number(event.target.value))
@@ -195,10 +209,10 @@ export default function ProjectDetailPage() {
                           queryClient.invalidateQueries({ queryKey: ["assignments"] });
                           toast.success("Assigned. They must receive or decline it.");
                         })
-                        .catch((error) => toast.error(apiErrorMessage(error, "Could not assign.")));
+                        .catch((error) => toast.error(apiErrorMessage(error, "Cannot transfer while a timer is running.")));
                     }}
                   >
-                    <option value="">Assign</option>
+                    <option value="">{task.transfer_locked ? "Timer locked" : "Assign"}</option>
                     {(users?.data ?? project.members ?? []).map((user) => (
                       <option key={user.id} value={user.id}>
                         {user.name}

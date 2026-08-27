@@ -78,6 +78,10 @@ export interface Project {
   tasks_count?: number;
   completed_tasks_count?: number;
   overdue_tasks_count?: number;
+  last_activity_at?: string | null;
+  last_activity_kind?: string | null;
+  has_live_timer?: boolean;
+  overtime_count?: number;
 }
 
 export interface TaskAssignment {
@@ -94,6 +98,20 @@ export interface TaskAttachment {
   mime_type: string;
   size_bytes: number;
   created_at: string;
+}
+
+export interface TimeExtensionRequest {
+  id: number;
+  task_id?: number;
+  requested_minutes: number;
+  reason: string;
+  status: "pending" | "accepted" | "rejected" | string;
+  review_note?: string | null;
+  reviewed_at?: string | null;
+  created_at?: string;
+  task?: { id: number; title: string; project?: { id: number; name: string } | null };
+  user?: { id: number; name: string } | null;
+  reviewer?: { id: number; name: string } | null;
 }
 
 export interface Task {
@@ -122,6 +140,22 @@ export interface Task {
   creator?: User | null;
   comments?: { id: number; body: string; user?: User; created_at: string }[];
   attachments?: TaskAttachment[];
+  live_timer?: {
+    id: number;
+    status: "running" | "paused" | string;
+    elapsed_seconds: number;
+    started_at?: string | null;
+    user?: { id: number; name: string } | null;
+  } | null;
+  transfer_locked?: boolean;
+  latest_comment?: { id: number; body: string; user?: { id: number; name: string } | null; created_at: string } | null;
+  latest_attachment?: { id: number; original_name: string; user?: { id: number; name: string } | null; created_at: string } | null;
+  allocated_seconds?: number;
+  billed_seconds?: number;
+  remaining_seconds?: number;
+  over_allocation?: boolean;
+  can_request_extension?: boolean;
+  time_extensions?: TimeExtensionRequest[];
 }
 
 export interface RequirementDocument {

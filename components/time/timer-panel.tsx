@@ -29,18 +29,32 @@ export function TimerPanel({
   session,
   taskId,
   taskTitle,
+  allocatedSeconds,
+  billedSeconds,
+  rejectedExtension,
 }: {
   session: TimeSession | null;
   taskId?: number;
   taskTitle?: string;
+  allocatedSeconds?: number;
+  billedSeconds?: number;
+  rejectedExtension?: boolean;
 }) {
   const queryClient = useQueryClient();
   const elapsed = useLiveSeconds(session);
   const onThisTask = Boolean(taskId && session && session.task_id === taskId);
+  const liveBase = onThisTask ? (session?.elapsed_seconds ?? 0) : 0;
+  const liveBilled = onThisTask ? (billedSeconds ?? liveBase) - liveBase + elapsed : (billedSeconds ?? 0);
+  const over =
+    Boolean(rejectedExtension) ||
+    (Boolean(allocatedSeconds) && liveBilled > (allocatedSeconds ?? 0));
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["time"] });
     queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    queryClient.invalidateQueries({ queryKey: ["projects"] });
+    queryClient.invalidateQueries({ queryKey: ["project-tasks"] });
     if (taskId) queryClient.invalidateQueries({ queryKey: ["task", String(taskId)] });
   };
 
@@ -83,14 +97,21 @@ export function TimerPanel({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="font-mono text-3xl tabular-nums">{formatDuration(onThisTask || !taskId ? elapsed : 0)}</p>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className={`font-mono text-3xl tabular-nums ${over ? "text-rose-300" : ""}`}>
+            {formatDuration(onThisTask || !taskId ? elapsed : 0)}
+          </p>
+          <p className={`mt-1 text-sm ${over ? "text-rose-300" : "text-slate-400"}`}>
             {session
               ? `${session.status} · ${session.task?.title ?? taskTitle ?? "Active task"}`
               : taskTitle ?? "No timer running"}
+            {over ? " · over allocated time" : ""}
           </p>
         </div>
-        {session && <Badge tone={session.status === "running" ? "green" : "yellow"}>{session.status}</Badge>}
+        {session && (
+          <Badge tone={over ? "red" : session.status === "running" ? "green" : "yellow"}>
+            {over ? "over time" : session.status}
+          </Badge>
+        )}
       </div>
       <div className="flex flex-wrap gap-2">
         {(!session || (taskId && !onThisTask)) && (

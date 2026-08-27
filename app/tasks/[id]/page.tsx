@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { TimerPanel } from "@/components/time/timer-panel";
 import { apiErrorMessage } from "@/lib/api";
+import { formatDuration } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 import { recommendAssignee } from "@/services/requirements";
-import { acceptTask, addComment, addTaskAttachment, changeTaskStatus, declineTask, getTask } from "@/services/tasks";
+import { acceptTask, addComment, addTaskAttachment, changeTaskStatus, declineTask, getTask, requestTimeExtension } from "@/services/tasks";
 import { getCurrentSession } from "@/services/time";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -20,14 +21,22 @@ export default function TaskDetailPage() {
   const queryClient = useQueryClient();
   const { user, can } = useAuth();
   const [body, setBody] = useState("");
-  const { data: task, isLoading } = useQuery({ queryKey: ["task", params.id], queryFn: () => getTask(params.id) });
-  const { data: current } = useQuery({ queryKey: ["time", "current"], queryFn: getCurrentSession });
+  const [extraMinutes, setExtraMinutes] = useState("30");
+  const [extraReason, setExtraReason] = useState("");
+  const { data: task, isLoading } = useQuery({
+    queryKey: ["task", params.id],
+    queryFn: () => getTask(params.id),
+    refetchInterval: 4000,
+  });
+  const { data: current } = useQuery({ queryKey: ["time", "current"], queryFn: getCurrentSession, refetchInterval: 4000 });
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["task", params.id] });
     queryClient.invalidateQueries({ queryKey: ["tasks"] });
     queryClient.invalidateQueries({ queryKey: ["dashboard"] });
-    queryClient.invalidateQueries({ queryKey: ["assignments"] });
+    queryClient.invalidateQueries({ queryKey: ["time-extensions"] });
+    queryClient.invalidateQueries({ queryKey: ["time"] });
+    queryClient.invalidateQueries({ queryKey: ["projects"] });
   };
 
   const recommend = useMutation({
@@ -67,6 +76,15 @@ export default function TaskDetailPage() {
     },
     onError: (error) => toast.error(apiErrorMessage(error, "Could not decline.")),
   });
+  const extend = useMutation({
+    mutationFn: () => requestTimeExtension(params.id, { minutes: Number(extraMinutes), reason: extraReason }),
+    onSuccess: () => {
+      setExtraReason("");
+      invalidate();
+      toast.success("Extension request sent to the CTO");
+    },
+    onError: (error) => toast.error(apiErrorMessage(error, "Could not request more time.")),
+  });
   const upload = useMutation({
     mutationFn: (file: File) => addTaskAttachment(params.id, file),
     onSuccess: () => {
@@ -82,6 +100,11 @@ export default function TaskDetailPage() {
   const pendingForMe = assignmentStatus === "pending" && task.assignee?.id === user?.id;
   const accepted = assignmentStatus === "accepted" || (!assignmentStatus && Boolean(task.assignee));
   const canTime = accepted && ["todo", "in_progress", "blocked", "in_review", "qa"].includes(task.status);
+  const isAssignee = task.assignee?.id === user?.id;
+  const pendingExtension = (task.time_extensions ?? []).find((item) => item.status === "pending");
+  const rejectedExtension = (task.time_extensions ?? []).find((item) => item.status === "rejected");
+  const remaining = task.remaining_seconds ?? 0;
+  const over = Boolean(task.over_allocation) || Boolean(rejectedExtension);
 
   return (
     <div className="space-y-6">
@@ -102,6 +125,7 @@ export default function TaskDetailPage() {
               {assignmentStatus === "pending" ? "waiting to receive" : assignmentStatus}
             </Badge>
           )}
+          {task.transfer_locked && <Badge tone="yellow">Transfer locked</Badge>}
         </div>
       </div>
 
@@ -138,13 +162,16 @@ export default function TaskDetailPage() {
           {task.assignment_reason && <p className="mt-1 text-xs text-slate-400">{task.assignment_reason}</p>}
           {can("tasks.assign") && (
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button size="sm" variant="secondary" disabled={recommend.isPending} onClick={() => recommend.mutate(false)}>
+              <Button size="sm" variant="secondary" disabled={recommend.isPending || task.transfer_locked} onClick={() => recommend.mutate(false)}>
                 Recommend
               </Button>
-              <Button size="sm" disabled={recommend.isPending} onClick={() => recommend.mutate(true)}>
+              <Button size="sm" disabled={recommend.isPending || task.transfer_locked} onClick={() => recommend.mutate(true)}>
                 Recommend and apply
               </Button>
             </div>
+          )}
+          {task.transfer_locked && (
+            <p className="mt-2 text-xs text-amber-200">Cannot transfer while a timer is running or paused.</p>
           )}
         </Card>
         <Card>
@@ -154,7 +181,10 @@ export default function TaskDetailPage() {
         <Card>
           <CardTitle>Time allocated</CardTitle>
           <p className="mt-2">
-            {task.estimated_hours ?? 0}h estimate / {task.actual_hours ?? 0}h actual
+            {task.estimated_hours ?? 0}h estimate / {task.actual_hours ?? 0}h logged
+          </p>
+          <p className={`mt-1 text-xs ${over ? "text-rose-300" : "text-slate-400"}`}>
+            {over ? `${formatDuration(Math.abs(remaining))} over allocation` : `${formatDuration(Math.max(0, remaining))} remaining`}
           </p>
         </Card>
       </div>
@@ -162,15 +192,79 @@ export default function TaskDetailPage() {
       {canTime && (
         <Card>
           <CardTitle>Timer</CardTitle>
-          <p className="mt-2 text-sm text-slate-400">Starting the timer marks this task as working.</p>
+          <p className="mt-2 text-sm text-slate-400">
+            Allocated time does not stop the clock. It keeps counting until you stop it.
+          </p>
           <div className="mt-4">
-            <TimerPanel session={current?.session ?? null} taskId={task.id} taskTitle={task.title} />
+            <TimerPanel
+              session={current?.session ?? null}
+              taskId={task.id}
+              taskTitle={task.title}
+              allocatedSeconds={task.allocated_seconds}
+              billedSeconds={task.billed_seconds}
+              rejectedExtension={Boolean(rejectedExtension)}
+            />
           </div>
         </Card>
       )}
 
       {pendingForMe && (
         <p className="text-sm text-amber-200">Receive the assignment before you can run the timer.</p>
+      )}
+
+      {isAssignee && accepted && (
+        <Card className={rejectedExtension ? "border-rose-400/40" : undefined}>
+          <CardTitle>Need more time</CardTitle>
+          {pendingExtension && (
+            <p className="mt-2 text-sm text-amber-200">
+              Waiting on the CTO for {pendingExtension.requested_minutes} more minutes. {pendingExtension.reason}
+            </p>
+          )}
+          {rejectedExtension && !pendingExtension && (
+            <p className="mt-2 text-sm text-rose-300">
+              Extra time was declined. The timer stays red. When you stop it and submit the task, overtime is reported with a negative performance mark.
+            </p>
+          )}
+          {!pendingExtension && !task.can_request_extension && remaining > 600 && (
+            <p className="mt-2 text-sm text-slate-400">
+              You can request more time in the last 10 minutes before the allocated time runs out.
+            </p>
+          )}
+          {task.can_request_extension && !pendingExtension && (
+            <div className="mt-3 space-y-3">
+              <p className="text-sm text-slate-300">
+                Ask the CTO how many extra minutes you need and why. The timer keeps running either way.
+              </p>
+              <input
+                className="h-10 w-full max-w-xs rounded-lg border border-white/10 bg-white/5 px-3 text-sm"
+                type="number"
+                min={15}
+                max={480}
+                value={extraMinutes}
+                onChange={(event) => setExtraMinutes(event.target.value)}
+              />
+              <textarea
+                className="min-h-24 w-full rounded-lg border border-white/10 bg-white/5 p-3 text-sm"
+                placeholder="Why do you need more time?"
+                value={extraReason}
+                onChange={(event) => setExtraReason(event.target.value)}
+              />
+              <Button disabled={!extraReason.trim() || extend.isPending} onClick={() => extend.mutate()}>
+                Request extra time
+              </Button>
+            </div>
+          )}
+          {(task.time_extensions ?? []).length > 0 && (
+            <div className="mt-4 space-y-2">
+              {(task.time_extensions ?? []).map((item) => (
+                <p key={item.id} className="text-xs text-slate-400">
+                  {item.requested_minutes} min · {item.status}
+                  {item.review_note ? ` · ${item.review_note}` : ""}
+                </p>
+              ))}
+            </div>
+          )}
+        </Card>
       )}
 
       {task.acceptance_criteria && (
