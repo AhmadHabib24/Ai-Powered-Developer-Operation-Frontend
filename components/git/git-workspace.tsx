@@ -86,10 +86,10 @@ export function GitWorkspace() {
   });
 
   if (!can("git.view")) {
-    return <p className="text-rose-300">You do not have permission to view Git repositories.</p>;
+    return <p className="text-rose-700 dark:text-rose-300">You do not have permission to view Git repositories.</p>;
   }
-  if (catalog.error) return <p className="text-rose-300">{apiErrorMessage(catalog.error, "Unable to load GitHub.")}</p>;
-  if (catalog.isLoading || !catalog.data) return <p className="text-slate-400">Loading GitHub organization…</p>;
+  if (catalog.error) return <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(catalog.error, "Unable to load GitHub.")}</p>;
+  if (catalog.isLoading || !catalog.data) return <p className="text-muted">Loading GitHub organization…</p>;
 
   const data = catalog.data;
   const org = data.organization;
@@ -118,9 +118,9 @@ export function GitWorkspace() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">GitHub</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">GitHub</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">{orgLabel}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-400">
+          <p className="mt-2 max-w-2xl text-sm text-muted">
             Repositories come from Settings → GitHub ({org ? "live organization value" : "set the organization slug first"}
             ). Connect an account or paste a PAT to see private repos, then run a code review on any repository.
           </p>
@@ -142,7 +142,7 @@ export function GitWorkspace() {
       {!org && (
         <Card className="border-amber-400/30">
           <CardTitle>Organization not set</CardTitle>
-          <p className="mt-2 text-sm text-amber-200">
+          <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
             Open Settings → GitHub and set <code>GITHUB_ORGANIZATION</code> (for example TecVeq-Solutions). The Git page reads that value dynamically.
           </p>
         </Card>
@@ -151,32 +151,32 @@ export function GitWorkspace() {
       {org && !data.oauth_configured && !data.token_configured && (
         <Card className="border-amber-400/30">
           <CardTitle>Credentials needed for private repos</CardTitle>
-          <p className="mt-2 text-sm text-amber-200">
+          <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
             Public repositories can still appear. For private {orgLabel} repos, paste a GitHub PAT in Settings → GitHub or click Connect after saving the OAuth client ID and secret.
           </p>
         </Card>
       )}
 
-      {data.list_error && <p className="text-sm text-rose-300">{data.list_error}</p>}
+      {data.list_error && <p className="text-sm text-rose-700 dark:text-rose-300">{data.list_error}</p>}
 
       <div className="grid gap-3 sm:grid-cols-3">
         <Card>
           <CardTitle>Repositories</CardTitle>
-          <p className="mt-2 text-3xl font-semibold text-white">{data.repository_count}</p>
-          <p className="mt-1 text-xs text-slate-500">Visible in {orgLabel}</p>
+          <p className="mt-2 text-3xl font-semibold text-foreground">{data.repository_count}</p>
+          <p className="mt-1 text-xs text-muted">Visible in {orgLabel}</p>
         </Card>
         <Card>
           <CardTitle>Linked to NEXORA</CardTitle>
-          <p className="mt-2 text-3xl font-semibold text-white">{data.repositories.filter((repo) => repo.linked).length}</p>
-          <p className="mt-1 text-xs text-slate-500">Ready for webhooks and history</p>
+          <p className="mt-2 text-3xl font-semibold text-foreground">{data.repositories.filter((repo) => repo.linked).length}</p>
+          <p className="mt-1 text-xs text-muted">Ready for webhooks and history</p>
         </Card>
         <Card>
           <CardTitle>Connection</CardTitle>
-          <p className="mt-2 text-sm text-slate-300">
+          <p className="mt-2 text-sm text-muted">
             {data.connected ? "GitHub account connected" : data.token_configured ? "Using Settings PAT" : "Not connected"}
           </p>
           {org && (
-            <a className="mt-2 inline-block text-sm text-amber-300 hover:text-amber-200" href={data.organization_url ?? "#"} target="_blank" rel="noreferrer">
+            <a className="mt-2 inline-block text-sm text-amber-700 dark:text-amber-300 hover:text-amber-700 dark:hover:text-amber-800 dark:text-amber-200" href={data.organization_url ?? "#"} target="_blank" rel="noreferrer">
               github.com/{org}
             </a>
           )}
@@ -187,7 +187,7 @@ export function GitWorkspace() {
         <CardTitle>Repositories</CardTitle>
         <div className="mt-4 space-y-2">
           {data.repositories.length === 0 && (
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-muted">
               No repositories returned for {orgLabel}. Invite the connecting GitHub user to the org, or add a PAT with repo and read:org in Settings.
             </p>
           )}
@@ -258,21 +258,21 @@ function RepoRow({
   const blocked = reviewing || (!repo.linked && !projectId);
 
   return (
-    <div className="rounded-xl bg-white/5">
+    <div className="rounded-xl bg-foreground/5">
       <div className="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <a href={repo.html_url ?? "#"} className="font-medium hover:text-amber-200" target="_blank" rel="noreferrer">
+            <a href={repo.html_url ?? "#"} className="font-medium hover:text-amber-700 dark:hover:text-amber-800 dark:text-amber-200" target="_blank" rel="noreferrer">
               {repo.full_name}
             </a>
             <Badge tone={repo.private ? "yellow" : "green"}>{repo.private ? "private" : "public"}</Badge>
             {repo.language && <Badge>{repo.language}</Badge>}
           </div>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-muted">
             {repo.linked_project ? (
               <>
                 Linked to{" "}
-                <Link className="text-amber-300 hover:text-amber-200" href={`/projects/${repo.linked_project.id}`}>
+                <Link className="text-amber-700 dark:text-amber-300 hover:text-amber-700 dark:hover:text-amber-800 dark:text-amber-200" href={`/projects/${repo.linked_project.id}`}>
                   {repo.linked_project.name}
                 </Link>
                 {repo.reviews_count ? ` · ${repo.reviews_count} review(s)` : ""}
@@ -297,13 +297,13 @@ function RepoRow({
         </div>
       </div>
       {open && canReview && (
-        <div className="space-y-3 border-t border-white/10 px-3 py-3">
+        <div className="space-y-3 border-t border-border px-3 py-3">
           {!repo.linked && (
             <div className="space-y-2">
-              <p className="text-xs text-slate-400">Link this repository to a NEXORA project so findings have a home.</p>
+              <p className="text-xs text-muted">Link this repository to a NEXORA project so findings have a home.</p>
               {canConnect ? (
                 <select
-                  className="h-10 w-full rounded-lg border border-white/10 bg-slate-950 px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
                   value={projectId}
                   onChange={(event) => onProjectId(event.target.value ? Number(event.target.value) : "")}
                 >
@@ -315,20 +315,20 @@ function RepoRow({
                   ))}
                 </select>
               ) : (
-                <p className="text-sm text-amber-200">Ask a lead with git.connect to link this repo first.</p>
+                <p className="text-sm text-amber-800 dark:text-amber-200">Ask a lead with git.connect to link this repo first.</p>
               )}
             </div>
           )}
-          {detailsLoading && <p className="text-sm text-slate-400">Loading branches and pull requests…</p>}
+          {detailsLoading && <p className="text-sm text-muted">Loading branches and pull requests…</p>}
           {!detailsLoading && (
             <div className="space-y-2">
-              <label className="text-xs uppercase tracking-wide text-slate-500">Branch to review</label>
+              <label className="text-xs uppercase tracking-wide text-muted">Branch to review</label>
               {branches.length === 0 ? (
-                <p className="text-sm text-slate-400">No branches were returned for this repository.</p>
+                <p className="text-sm text-muted">No branches were returned for this repository.</p>
               ) : (
                 <div className="flex flex-col gap-2 sm:flex-row">
                   <select
-                    className="h-10 min-w-0 flex-1 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm"
+                    className="h-10 min-w-0 flex-1 rounded-lg border border-border bg-background px-3 text-sm"
                     value={branch}
                     onChange={(event) => onBranch(event.target.value)}
                   >
@@ -345,19 +345,19 @@ function RepoRow({
                   </Button>
                 </div>
               )}
-              <p className="text-xs text-slate-500">{branches.length} branch{branches.length === 1 ? "" : "es"} on GitHub.</p>
+              <p className="text-xs text-muted">{branches.length} branch{branches.length === 1 ? "" : "es"} on GitHub.</p>
             </div>
           )}
           {!detailsLoading && pullRequests.length > 0 && (
             <div className="space-y-2">
-              <p className="text-xs uppercase tracking-wide text-slate-500">Open pull requests</p>
+              <p className="text-xs uppercase tracking-wide text-muted">Open pull requests</p>
               {pullRequests.map((pr) => (
                 <div key={pr.number} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-black/20 px-3 py-2">
                   <div>
                     <p className="text-sm font-medium">
                       #{pr.number} {pr.title}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted">
                       {pr.author_login}
                       {pr.head_branch ? ` · ${pr.head_branch}` : ""}
                     </p>

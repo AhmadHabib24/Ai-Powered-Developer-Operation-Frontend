@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const controlClass =
-  "flex min-h-10 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50";
+  "flex min-h-10 w-full rounded-lg border border-border bg-foreground/5 px-3 py-2 text-sm text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50";
 
 function draftFromCatalog(catalog: SettingsCatalog): Record<string, string | number | boolean> {
   const next: Record<string, string | number | boolean> = {};
@@ -48,7 +48,7 @@ function FieldControl({
 }) {
   if (field.type === "bool") {
     return (
-      <label className="flex items-center gap-2 text-sm text-slate-300">
+      <label className="flex items-center gap-2 text-sm text-muted">
         <input
           type="checkbox"
           checked={Boolean(value)}
@@ -64,7 +64,7 @@ function FieldControl({
     return (
       <select className={controlClass} value={String(value ?? "")} onChange={(event) => onChange(event.target.value)}>
         {(field.options ?? []).map((option) => (
-          <option key={option || "(default)"} value={option} className="bg-slate-950">
+          <option key={option || "(default)"} value={option} className="bg-background">
             {option === "" ? "(default)" : option === "null" ? "null (disabled)" : option}
           </option>
         ))}
@@ -161,12 +161,12 @@ export default function SettingsPage() {
     onError: (error) => toast.error(apiErrorMessage(error, "Unable to upload logo.")),
   });
 
-  if (authLoading) return <p className="text-slate-400">Loading settings…</p>;
+  if (authLoading) return <p className="text-muted">Loading settings…</p>;
   if (!can("settings.manage")) {
-    return <p className="text-rose-300">Only the CTO can change organization settings.</p>;
+    return <p className="text-rose-700 dark:text-rose-300">Only the CTO can change organization settings.</p>;
   }
-  if (settings.error) return <p className="text-rose-300">{apiErrorMessage(settings.error, "Unable to load settings.")}</p>;
-  if (settings.isLoading || !activeGroup) return <p className="text-slate-400">Loading settings…</p>;
+  if (settings.error) return <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(settings.error, "Unable to load settings.")}</p>;
+  if (settings.isLoading || !activeGroup) return <p className="text-muted">Loading settings…</p>;
 
   const logoField = activeGroup.fields.find((field) => field.type === "logo");
 
@@ -174,10 +174,10 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Organization</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">Organization</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Settings</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-400">
-            Overrides live in the database (encrypted). They sit on top of <code className="text-slate-300">.env</code>. APP_KEY and
+          <p className="mt-2 max-w-2xl text-sm text-muted">
+            Overrides live in the database (encrypted). They sit on top of <code className="text-muted">.env</code>. APP_KEY and
             database credentials stay in the environment file so this screen cannot lock you out.
           </p>
         </div>
@@ -193,7 +193,7 @@ export default function SettingsPage() {
               type="button"
               onClick={() => setGroupId(group.id)}
               className={`w-full rounded-lg px-3 py-2 text-left text-sm ${
-                activeGroup.id === group.id ? "bg-amber-400/10 text-amber-100" : "text-slate-400 hover:bg-white/5"
+                activeGroup.id === group.id ? "bg-amber-400/10 text-amber-800 dark:text-amber-100" : "text-muted hover:bg-foreground/5"
               }`}
             >
               {group.title}
@@ -202,12 +202,12 @@ export default function SettingsPage() {
         </Card>
         <Card className="space-y-5">
           <div>
-            <CardTitle className="text-base text-white">{activeGroup.title}</CardTitle>
-            <p className="mt-1 text-sm text-slate-400">{activeGroup.description}</p>
+            <CardTitle className="text-base text-foreground">{activeGroup.title}</CardTitle>
+            <p className="mt-1 text-sm text-muted">{activeGroup.description}</p>
             {activeGroup.id === "git" && (
-              <p className="mt-2 text-sm text-amber-200">
+              <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
                 Organization, OAuth, and token values on this screen are what the{" "}
-                <a href="/git" className="underline hover:text-amber-100">
+                <a href="/git" className="underline hover:text-amber-800 dark:hover:text-amber-800 dark:text-amber-100">
                   Git workspace
                 </a>{" "}
                 uses to list repos and start code reviews.
@@ -216,10 +216,10 @@ export default function SettingsPage() {
           </div>
           {logoField && (
             <div className="space-y-2">
-              <label className="block text-sm text-slate-300">{logoField.label}</label>
+              <label className="block text-sm text-muted">{logoField.label}</label>
               {typeof logoField.value === "string" && logoField.value && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={logoField.value} alt="App logo" className="h-12 w-12 rounded-lg object-contain bg-white/5" />
+                <img src={logoField.value} alt="App logo" className="h-12 w-12 rounded-lg object-contain bg-foreground/5" />
               )}
               <Input
                 type="file"
@@ -229,7 +229,7 @@ export default function SettingsPage() {
                   if (file) logoMutation.mutate(file);
                 }}
               />
-              {logoField.help && <p className="text-xs text-slate-500">{logoField.help}</p>}
+              {logoField.help && <p className="text-xs text-muted">{logoField.help}</p>}
             </div>
           )}
           {activeGroup.fields
@@ -237,17 +237,17 @@ export default function SettingsPage() {
             .map((field) => (
               <div key={field.key} className="space-y-1">
                 <div className="flex items-center justify-between gap-3">
-                  <label className="text-sm text-slate-300">{field.label}</label>
-                  <span className="font-mono text-[10px] text-slate-500">{field.key}</span>
+                  <label className="text-sm text-muted">{field.label}</label>
+                  <span className="font-mono text-[10px] text-muted">{field.key}</span>
                 </div>
                 <FieldControl
                   field={field}
                   value={draft[field.key] ?? (field.type === "bool" ? false : field.type === "int" ? 0 : "")}
                   onChange={(value) => setDraft((current) => ({ ...current, [field.key]: value }))}
                 />
-                {field.help && <p className="text-xs text-slate-500">{field.help}</p>}
+                {field.help && <p className="text-xs text-muted">{field.help}</p>}
                 {field.type === "secret" && field.configured && (
-                  <p className="text-xs text-slate-500">Current value {field.mask}. Leave blank to keep it.</p>
+                  <p className="text-xs text-muted">Current value {field.mask}. Leave blank to keep it.</p>
                 )}
               </div>
             ))}

@@ -79,14 +79,14 @@ export default function CodeReviewDetailPage() {
     }
   }
 
-  if (error) return <p className="text-rose-300">{apiErrorMessage(error, "Unable to load this review.")}</p>;
-  if (isLoading || !review) return <p className="text-slate-400">Loading review…</p>;
+  if (error) return <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(error, "Unable to load this review.")}</p>;
+  if (isLoading || !review) return <p className="text-muted">Loading review…</p>;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <Link href={`/projects/${params.id}/reviews`} className="text-sm text-amber-300">
+          <Link href={`/projects/${params.id}/reviews`} className="text-sm text-amber-700 dark:text-amber-300">
             Back to reviews
           </Link>
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -94,15 +94,15 @@ export default function CodeReviewDetailPage() {
             <Badge>{review.status}</Badge>
             {review.blocked && <Badge tone="red">merge gate</Badge>}
           </div>
-          <p className="mt-2 max-w-3xl text-sm text-slate-400">{review.summary}</p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-2 max-w-3xl text-sm text-muted">{review.summary}</p>
+          <p className="mt-1 text-xs text-muted">
             {review.trigger}
             {review.branch ? ` · ${review.branch}` : ""}
             {review.commit_sha ? ` · ${review.commit_sha.slice(0, 10)}` : ""}
             {review.pull_request ? ` · PR #${review.pull_request.number}` : ""}
             {review.provider ? ` · ${review.provider}` : ""}
           </p>
-          {review.error && <p className="mt-2 text-sm text-rose-300">{review.error}</p>}
+          {review.error && <p className="mt-2 text-sm text-rose-700 dark:text-rose-300">{review.error}</p>}
         </div>
         <Button size="sm" variant="secondary" onClick={copyLink}>
           Copy link
@@ -110,14 +110,14 @@ export default function CodeReviewDetailPage() {
       </div>
       <Card>
         <CardTitle>Share</CardTitle>
-        <p className="mt-2 text-sm text-slate-400">Send this review to teammates. They get an in-app notification and email with the link.</p>
+        <p className="mt-2 text-sm text-muted">Send this review to teammates. They get an in-app notification and email with the link.</p>
         {people.length === 0 ? (
-          <p className="mt-3 text-sm text-slate-500">Add people to this project first, then you can share the review.</p>
+          <p className="mt-3 text-sm text-muted">Add people to this project first, then you can share the review.</p>
         ) : (
           <div className="mt-3 space-y-3">
             <div className="grid gap-2 sm:grid-cols-2">
               {people.map((person) => (
-                <label key={person.id} className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm">
+                <label key={person.id} className="flex items-center gap-2 rounded-lg bg-foreground/5 px-3 py-2 text-sm">
                   <input
                     type="checkbox"
                     className="accent-amber-400"
@@ -130,7 +130,7 @@ export default function CodeReviewDetailPage() {
                   />
                   <span>
                     {person.name}
-                    <span className="block text-xs text-slate-500">{person.email}</span>
+                    <span className="block text-xs text-muted">{person.email}</span>
                   </span>
                 </label>
               ))}
@@ -150,10 +150,10 @@ export default function CodeReviewDetailPage() {
         <CardTitle>Findings</CardTitle>
         <div className="mt-4 space-y-3">
           {review.findings?.length === 0 && (
-            <p className="text-sm text-slate-400">No issues were recorded on this diff.</p>
+            <p className="text-sm text-muted">No issues were recorded on this diff.</p>
           )}
           {review.findings?.map((finding) => (
-            <div key={finding.id} className="rounded-xl bg-white/5 p-4">
+            <div key={finding.id} className="rounded-xl bg-foreground/5 p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <Badge tone={severityTone[finding.severity] ?? "slate"}>{finding.severity}</Badge>
@@ -182,13 +182,13 @@ export default function CodeReviewDetailPage() {
                 )}
               </div>
               <p className="mt-2 font-medium">{finding.issue}</p>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-muted">
                 {finding.file_path}
                 {finding.line_start ? `:${finding.line_start}` : ""}
               </p>
-              {finding.why_it_matters && <p className="mt-2 text-sm text-slate-300">{finding.why_it_matters}</p>}
+              {finding.why_it_matters && <p className="mt-2 text-sm text-muted">{finding.why_it_matters}</p>}
               {finding.recommendation && (
-                <p className="mt-1 text-sm text-amber-100/90">Fix: {finding.recommendation}</p>
+                <p className="mt-1 text-sm text-amber-800 dark:text-amber-100/90">Fix: {finding.recommendation}</p>
               )}
             </div>
           ))}

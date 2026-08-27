@@ -71,8 +71,8 @@ export function NovaCommandOverlay() {
     <div className="nova-command-overlay fixed inset-0 z-[80] flex h-dvh flex-col overflow-hidden">
       <div className="relative flex shrink-0 items-center justify-between gap-3 px-3 py-2 lg:px-6 lg:py-4">
         <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-amber-300/80">Global mesh</p>
-          <h2 className="truncate text-sm font-semibold text-white sm:text-lg">{assistant} command theater</h2>
+          <p className="text-[10px] uppercase tracking-[0.35em] text-amber-700 dark:text-amber-300/80">Global mesh</p>
+          <h2 className="truncate text-sm font-semibold text-foreground sm:text-lg">{assistant} command theater</h2>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Button variant="secondary" size="sm" onClick={toggleMuted} aria-label={muted ? "Unmute" : "Mute"}>
@@ -104,7 +104,7 @@ export function NovaCommandOverlay() {
             <p className="mb-2 text-center text-[10px] uppercase tracking-[0.3em] text-amber-400/70">Tap a node to jump</p>
             <NovaGlobe onNavigate={navigate} />
           </div>
-          <div className="grid shrink-0 grid-cols-3 rounded-xl border border-amber-400/20 bg-slate-950/60 p-1">
+          <div className="grid shrink-0 grid-cols-3 rounded-xl border border-amber-400/20 bg-background/80 p-1">
             {MOBILE_PANELS.map((item) => (
               <button
                 key={item.id}
@@ -112,7 +112,7 @@ export function NovaCommandOverlay() {
                 onClick={() => setPanel(item.id)}
                 className={cn(
                   "rounded-lg px-2 py-2 text-[10px] uppercase tracking-[0.18em] text-amber-500",
-                  panel === item.id && "bg-amber-400/15 text-amber-100",
+                  panel === item.id && "bg-amber-400/15 text-amber-800 dark:text-amber-100",
                 )}
               >
                 {item.label}

@@ -11,9 +11,9 @@ export function RequirePermission({
 }) {
   const { can, isLoading } = useAuth();
 
-  if (isLoading) return <p className="text-slate-400">Loading…</p>;
+  if (isLoading) return <p className="text-muted">Loading…</p>;
   if (!can(permission)) {
-    return <p className="text-rose-300">You do not have permission to view this.</p>;
+    return <p className="text-rose-700 dark:text-rose-300">You do not have permission to view this.</p>;
   }
 
   return children;

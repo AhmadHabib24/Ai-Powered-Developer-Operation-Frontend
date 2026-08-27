@@ -90,21 +90,21 @@ export function ProjectGitPanel({ projectId }: { projectId: string }) {
       <Card>
         <CardTitle>GitHub</CardTitle>
         {github?.organization && (
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-muted">
             Company org{" "}
-            <a className="text-amber-300 hover:text-amber-200" href={github.organization_url ?? `https://github.com/${github.organization}`} target="_blank" rel="noreferrer">
+            <a className="text-amber-700 dark:text-amber-300 hover:text-amber-700 dark:hover:text-amber-800 dark:text-amber-200" href={github.organization_url ?? `https://github.com/${github.organization}`} target="_blank" rel="noreferrer">
               {github.organization}
             </a>
             . Developers push there. NEXORA records commits and PRs after a repo is linked.{" "}
             {can("git.view") && (
-              <Link className="text-amber-300 hover:text-amber-200" href="/git">
+              <Link className="text-amber-700 dark:text-amber-300 hover:text-amber-700 dark:hover:text-amber-800 dark:text-amber-200" href="/git">
                 Open all {github.organization} repositories
               </Link>
             )}
           </p>
         )}
         {!github?.configured && (
-          <p className="mt-2 text-sm text-amber-200">
+          <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
             GitHub OAuth is not configured yet. A CTO with Settings access must create an OAuth App on{" "}
             <a
               className="underline"
@@ -119,14 +119,14 @@ export function ProjectGitPanel({ projectId }: { projectId: string }) {
               {github?.organization ?? "GitHub"}
             </a>{" "}
             and paste the client ID and secret into Settings → GitHub. Callback URL:{" "}
-            <code className="text-amber-100">/api/v1/git/github/oauth/callback</code>
+            <code className="text-amber-800 dark:text-amber-100">/api/v1/git/github/oauth/callback</code>
           </p>
         )}
         {repos && repos.length > 0 && (
           <div className="mt-3 space-y-2">
             {repos.map((repo) => (
-              <div key={repo.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm">
-                <a href={repo.html_url ?? "#"} className="hover:text-amber-200" target="_blank" rel="noreferrer">
+              <div key={repo.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-foreground/5 px-3 py-2 text-sm">
+                <a href={repo.html_url ?? "#"} className="hover:text-amber-700 dark:hover:text-amber-800 dark:text-amber-200" target="_blank" rel="noreferrer">
                   {repo.full_name}
                 </a>
                 <Badge tone={repo.webhook_status === "active" ? "green" : "yellow"}>{repo.webhook_status ?? "pending"}</Badge>
@@ -149,14 +149,14 @@ export function ProjectGitPanel({ projectId }: { projectId: string }) {
               )}
             </div>
             {Boolean(integrationId) && remotes && remotes.length === 0 && (
-              <p className="text-sm text-amber-200">
+              <p className="text-sm text-amber-800 dark:text-amber-200">
                 No {github?.organization ?? "company"} repositories are visible to this GitHub account. Invite the connecting user to the org as a member, then reconnect.
               </p>
             )}
             {integrations && integrations.length > 0 && (
               <div className="grid gap-2 md:grid-cols-2">
                 <select
-                  className="h-10 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm"
+                  className="h-10 rounded-lg border border-border bg-background px-3 text-sm"
                   value={integrationId}
                   onChange={(event) => {
                     setIntegrationId(event.target.value ? Number(event.target.value) : "");
@@ -171,7 +171,7 @@ export function ProjectGitPanel({ projectId }: { projectId: string }) {
                   ))}
                 </select>
                 <select
-                  className="h-10 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm"
+                  className="h-10 rounded-lg border border-border bg-background px-3 text-sm"
                   value={externalId}
                   onChange={(event) => setExternalId(event.target.value)}
                   disabled={!remotes}
@@ -195,11 +195,11 @@ export function ProjectGitPanel({ projectId }: { projectId: string }) {
         <Card>
           <CardTitle>Commits</CardTitle>
           <div className="mt-3 space-y-2 text-sm">
-            {commits?.data.length === 0 && <p className="text-slate-400">No webhook commits yet.</p>}
+            {commits?.data.length === 0 && <p className="text-muted">No webhook commits yet.</p>}
             {commits?.data.map((commit) => (
-              <div key={commit.id} className="rounded-xl bg-white/5 px-3 py-2">
+              <div key={commit.id} className="rounded-xl bg-foreground/5 px-3 py-2">
                 <p className="font-medium">{commit.message}</p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-muted">
                   {commit.sha.slice(0, 7)} · {commit.author_name ?? commit.user?.name ?? "unknown"}
                   {commit.task ? ` · ${commit.task.title}` : ""}
                 </p>
@@ -210,14 +210,14 @@ export function ProjectGitPanel({ projectId }: { projectId: string }) {
         <Card>
           <CardTitle>Pull requests</CardTitle>
           <div className="mt-3 space-y-2 text-sm">
-            {pullRequests?.data.length === 0 && <p className="text-slate-400">No pull requests yet.</p>}
+            {pullRequests?.data.length === 0 && <p className="text-muted">No pull requests yet.</p>}
             {pullRequests?.data.map((pr) => (
-              <div key={pr.id} className="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-3 py-2">
+              <div key={pr.id} className="flex items-center justify-between gap-3 rounded-xl bg-foreground/5 px-3 py-2">
                 <div>
                   <p className="font-medium">
                     #{pr.number} {pr.title}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {pr.author_login}
                     {pr.task ? ` · ${pr.task.title}` : ""}
                   </p>

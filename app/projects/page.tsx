@@ -29,9 +29,9 @@ export default function ProjectsPage() {
     refetchInterval: 8000,
   });
 
-  if (authLoading) return <p className="text-slate-400">Loading projects…</p>;
+  if (authLoading) return <p className="text-muted">Loading projects…</p>;
   if (!can("projects.view")) {
-    return <p className="text-rose-300">You do not have permission to view this.</p>;
+    return <p className="text-rose-700 dark:text-rose-300">You do not have permission to view this.</p>;
   }
 
   return (
@@ -39,7 +39,7 @@ export default function ProjectsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold sm:text-3xl">Projects</h1>
-          <p className="text-sm text-slate-400">Live work, new files, comments, and overtime rise to the top.</p>
+          <p className="text-sm text-muted">Live work, new files, comments, and overtime rise to the top.</p>
         </div>
         {can("projects.create") && (
           <Button asChild>
@@ -47,15 +47,15 @@ export default function ProjectsPage() {
           </Button>
         )}
       </div>
-      {isLoading && <p className="text-slate-400">Loading projects…</p>}
+      {isLoading && <p className="text-muted">Loading projects…</p>}
       <div className="grid gap-4">
         {data?.data.map((project) => (
           <Link key={project.id} href={`/projects/${project.id}`}>
             <Card className="flex flex-col gap-3 hover:border-amber-400/30 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="text-lg font-medium">{project.name}</p>
-                <p className="text-sm text-slate-400">{project.description}</p>
-                <p className="mt-2 text-xs text-slate-500">
+                <p className="text-sm text-muted">{project.description}</p>
+                <p className="mt-2 text-xs text-muted">
                   {project.last_activity_kind
                     ? `${ACTIVITY_LABEL[project.last_activity_kind] ?? project.last_activity_kind} ${timeAgo(project.last_activity_at)}`
                     : `Deadline ${formatDate(project.deadline)}`}

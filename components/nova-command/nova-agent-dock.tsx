@@ -138,7 +138,7 @@ export function NovaAgentDock() {
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
-      className="nova-agent-dock group fixed right-3 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] z-40 touch-none select-none rounded-2xl border border-amber-400/25 bg-[#070b12]/90 px-3 py-2 text-left shadow-[0_0_40px_rgba(245,158,11,0.22)] backdrop-blur-md lg:bottom-5 lg:right-5 lg:px-4 lg:py-3"
+      className="nova-agent-dock group fixed right-3 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] z-40 touch-none select-none rounded-2xl border border-amber-400/25 bg-background px-3 py-2 text-left shadow-[0_0_40px_rgba(245,158,11,0.22)] backdrop-blur-md lg:bottom-5 lg:right-5 lg:px-4 lg:py-3"
       style={
         pos
           ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto", cursor: dragging ? "grabbing" : "grab" }
@@ -146,12 +146,12 @@ export function NovaAgentDock() {
       }
       aria-label={`Engage ${assistant}. Drag to move.`}
     >
-      <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-amber-300">
+      <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-amber-700 dark:text-amber-300">
         <BrandMark variant="nora" className="h-6 w-6 rounded-full" />
         Engage
       </span>
-      <span className="mt-1 block text-sm font-medium text-white">{assistant} mesh</span>
-      <span className="hidden text-[11px] text-slate-400 group-hover:text-amber-200 lg:block">Drag anywhere · click to open</span>
+      <span className="mt-1 block text-sm font-medium text-foreground">{assistant} mesh</span>
+      <span className="hidden text-[11px] text-muted group-hover:text-amber-700 dark:hover:text-amber-800 dark:text-amber-200 lg:block">Drag anywhere · click to open</span>
     </button>
   );
 }

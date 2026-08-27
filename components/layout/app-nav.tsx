@@ -25,8 +25,9 @@ export function AppNav({ onNavigate, className }: { onNavigate?: () => void; cla
             href={link.href}
             onClick={onNavigate}
             className={cn(
-              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-400 hover:bg-white/5 hover:text-white",
-              active && "bg-amber-400/10 text-amber-200",
+              "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted hover:bg-foreground/5 hover:text-foreground",
+              active &&
+                "bg-amber-400/10 text-amber-800 shadow-[inset_3px_0_0_#f59e0b] dark:text-amber-200 dark:shadow-[inset_3px_0_0_#fbbf24]",
             )}
           >
             <link.icon className="h-4 w-4 shrink-0" />

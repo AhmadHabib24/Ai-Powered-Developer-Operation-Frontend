@@ -13,7 +13,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const SELECT = "h-10 w-full rounded-lg border border-white/10 bg-slate-950 px-3 text-sm text-white";
+const SELECT = "h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground";
 const FALLBACK_ROLES = [
   { slug: "developer", label: "Developer" },
   { slug: "project_manager", label: "Project manager" },
@@ -146,10 +146,10 @@ export default function PeoplePage() {
     onError: (err) => toast.error(apiErrorMessage(err, "Could not remove this person.")),
   });
 
-  if (authLoading) return <p className="text-slate-400">Loading people…</p>;
-  if (!can("users.view")) return <p className="text-rose-300">You do not have permission to view this.</p>;
-  if (error) return <p className="text-rose-300">{apiErrorMessage(error, "Unable to load people.")}</p>;
-  if (isLoading) return <p className="text-slate-400">Loading people…</p>;
+  if (authLoading) return <p className="text-muted">Loading people…</p>;
+  if (!can("users.view")) return <p className="text-rose-700 dark:text-rose-300">You do not have permission to view this.</p>;
+  if (error) return <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(error, "Unable to load people.")}</p>;
+  if (isLoading) return <p className="text-muted">Loading people…</p>;
 
   const isEditingSelf = typeof editingId === "number" && editingId === me?.id;
   const canCreate = can("users.create");
@@ -163,7 +163,7 @@ export default function PeoplePage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold sm:text-3xl">People</h1>
-          <p className="mt-1 text-sm text-slate-400">Add teammates, update roles, or remove people who should no longer have access.</p>
+          <p className="mt-1 text-sm text-muted">Add teammates, update roles, or remove people who should no longer have access.</p>
         </div>
         {canCreate && editingId !== "new" && (
           <Button
@@ -182,7 +182,7 @@ export default function PeoplePage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-lg font-medium">{editingId === "new" ? "New person" : "Edit person"}</p>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-muted">
                 {editingId === "new" ? "They can sign in as soon as you save." : "Leave password blank to keep the current one."}
               </p>
             </div>
@@ -229,13 +229,13 @@ export default function PeoplePage() {
             <Input placeholder="Timezone" value={form.timezone} onChange={(e) => setField("timezone", e.target.value)} />
           </div>
           <textarea
-            className="min-h-24 w-full rounded-lg border border-white/10 bg-white/5 p-3 text-sm"
+            className="min-h-24 w-full rounded-lg border border-border bg-foreground/5 p-3 text-sm"
             placeholder="Bio"
             value={form.bio}
             onChange={(e) => setField("bio", e.target.value)}
           />
           {editingId !== "new" && canUpdate && (
-            <label className="flex items-center gap-2 text-sm text-slate-300">
+            <label className="flex items-center gap-2 text-sm text-muted">
               <input type="checkbox" checked={form.is_active} onChange={(e) => setField("is_active", e.target.checked)} />
               Active account
             </label>
@@ -252,11 +252,11 @@ export default function PeoplePage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-lg font-medium">{person.name}</p>
-                <p className="text-sm text-slate-400">{person.email}</p>
+                <p className="text-sm text-muted">{person.email}</p>
               </div>
               <Badge>{person.experience_level}</Badge>
             </div>
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-3 text-xs text-muted">
               {person.availability_status} · {person.weekly_capacity_hours}h capacity
               {!person.is_active ? " · inactive" : ""}
             </p>

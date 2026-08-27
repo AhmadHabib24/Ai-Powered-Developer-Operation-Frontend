@@ -19,13 +19,13 @@ export default function ProjectAnalysesPage() {
     },
   });
 
-  if (error) return <p className="text-rose-300">{apiErrorMessage(error, "Unable to load analyses.")}</p>;
-  if (isLoading) return <p className="text-slate-400">Loading drafts…</p>;
+  if (error) return <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(error, "Unable to load analyses.")}</p>;
+  if (isLoading) return <p className="text-muted">Loading drafts…</p>;
 
   return (
     <div className="space-y-6">
       <div>
-        <Link href={`/projects/${params.id}`} className="text-sm text-amber-300">
+        <Link href={`/projects/${params.id}`} className="text-sm text-amber-700 dark:text-amber-300">
           Back to project
         </Link>
         <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Requirement drafts</h1>
@@ -33,16 +33,16 @@ export default function ProjectAnalysesPage() {
       <Card>
         <CardTitle>Analyses</CardTitle>
         <div className="mt-4 space-y-2">
-          {data?.length === 0 && <p className="text-sm text-slate-400">No analyses yet.</p>}
+          {data?.length === 0 && <p className="text-sm text-muted">No analyses yet.</p>}
           {data?.map((analysis) => (
             <Link
               key={analysis.id}
               href={`/projects/${params.id}/analyses/${analysis.id}`}
-              className="flex flex-col gap-2 rounded-xl bg-white/5 px-4 py-3 hover:bg-white/10 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-2 rounded-xl bg-foreground/5 px-4 py-3 hover:bg-foreground/10 sm:flex-row sm:items-center sm:justify-between"
             >
               <div>
                 <p className="font-medium">{analysis.summary ?? `Analysis #${analysis.id}`}</p>
-                <p className="text-xs text-slate-400">{analysis.complexity ?? "unscored"}</p>
+                <p className="text-xs text-muted">{analysis.complexity ?? "unscored"}</p>
               </div>
               <Badge>{analysis.status}</Badge>
             </Link>

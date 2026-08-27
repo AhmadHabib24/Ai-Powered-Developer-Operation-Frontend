@@ -40,9 +40,9 @@ export function NovaTerminal({ enabled }: { enabled: boolean }) {
   return (
     <MeshTerminal title="Live ops log" liveLabel={feed.isFetching ? "sync" : "live"} className="h-full min-h-0 lg:min-h-[280px]" bodyRef={scroller}>
       <div className="space-y-1">
-        {feed.error && <p className="text-rose-300">{apiErrorMessage(feed.error, "Audit uplink denied.")}</p>}
+        {feed.error && <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(feed.error, "Audit uplink denied.")}</p>}
         {events.map((item) => (
-          <p key={item.id} className={item.id < 0 ? "text-amber-500/80" : "text-amber-100"}>
+          <p key={item.id} className={item.id < 0 ? "text-amber-500/80" : "text-amber-800 dark:text-amber-100"}>
             <span className="text-amber-700">›</span> {item.line}
           </p>
         ))}

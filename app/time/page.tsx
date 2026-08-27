@@ -66,17 +66,17 @@ export default function TimePage() {
     onError: (err) => toast.error(apiErrorMessage(err, "Could not create the entry.")),
   });
 
-  if (authLoading) return <p className="text-slate-400">Loading time…</p>;
-  if (!can("time.view")) return <p className="text-rose-300">You do not have permission to view this.</p>;
-  if (error) return <p className="text-rose-300">{apiErrorMessage(error, "Unable to load time entries.")}</p>;
-  if (summaryLoading || entriesLoading || !summary) return <p className="text-slate-400">Loading time…</p>;
+  if (authLoading) return <p className="text-muted">Loading time…</p>;
+  if (!can("time.view")) return <p className="text-rose-700 dark:text-rose-300">You do not have permission to view this.</p>;
+  if (error) return <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(error, "Unable to load time entries.")}</p>;
+  if (summaryLoading || entriesLoading || !summary) return <p className="text-muted">Loading time…</p>;
 
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Time report</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">Time report</p>
         <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Hours by task</h1>
-        <p className="mt-2 max-w-2xl text-sm text-slate-400">
+        <p className="mt-2 max-w-2xl text-sm text-muted">
           This is not the task list. It shows who spent time where: averages, task totals, and the raw entries underneath.
         </p>
       </div>
@@ -96,22 +96,22 @@ export default function TimePage() {
         <Card>
           <CardTitle>Average / task</CardTitle>
           <p className="mt-2 text-3xl">{formatHours(summary.average_seconds ?? 0)}</p>
-          <p className="mt-1 text-xs text-slate-500">{summary.task_count ?? 0} task(s) this period</p>
+          <p className="mt-1 text-xs text-muted">{summary.task_count ?? 0} task(s) this period</p>
         </Card>
       </div>
       <Card>
         <CardTitle>Time by task</CardTitle>
         <div className="mt-4 space-y-2">
-          {(summary.by_task ?? []).length === 0 && <p className="text-sm text-slate-400">No time recorded in this period.</p>}
+          {(summary.by_task ?? []).length === 0 && <p className="text-sm text-muted">No time recorded in this period.</p>}
           {(summary.by_task ?? []).map((row) => (
             <Link
               key={row.task_id}
               href={`/tasks/${row.task_id}`}
-              className="flex flex-col gap-1 rounded-xl bg-white/5 px-4 py-3 hover:bg-white/10 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-1 rounded-xl bg-foreground/5 px-4 py-3 hover:bg-foreground/10 sm:flex-row sm:items-center sm:justify-between"
             >
               <div>
                 <p className="font-medium">{row.task ?? `Task #${row.task_id}`}</p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-muted">
                   {row.project ?? `Project #${row.project_id}`} · {row.sessions} session(s)
                   {row.estimated_hours ? ` · ${row.estimated_hours}h allocated` : ""}
                 </p>
@@ -124,7 +124,7 @@ export default function TimePage() {
       {can("time.manage") && (
         <Card>
           <CardTitle>Manual entry</CardTitle>
-          <p className="mt-2 text-sm text-slate-400">Creates a new immutable row. Use adjustments to correct an existing entry.</p>
+          <p className="mt-2 text-sm text-muted">Creates a new immutable row. Use adjustments to correct an existing entry.</p>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             <Input placeholder="Task ID" value={manual.task_id} onChange={(e) => setManual({ ...manual, task_id: e.target.value })} />
             <Input placeholder="Reason" value={manual.reason} onChange={(e) => setManual({ ...manual, reason: e.target.value })} />
@@ -139,13 +139,13 @@ export default function TimePage() {
       <Card>
         <CardTitle>Recent entries</CardTitle>
         <div className="mt-4 space-y-3">
-          {entries?.data.length === 0 && <p className="text-sm text-slate-400">No time recorded yet.</p>}
+          {entries?.data.length === 0 && <p className="text-sm text-muted">No time recorded yet.</p>}
           {entries?.data.map((entry) => (
-            <div key={entry.id} className="rounded-xl bg-white/5 px-4 py-3">
+            <div key={entry.id} className="rounded-xl bg-foreground/5 px-4 py-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="font-medium">{entry.task?.title ?? `Task #${entry.task_id}`}</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {formatDate(entry.started_at)} · {entry.work_mode} · {entry.source}
                     {entry.user?.name ? ` · ${entry.user.name}` : ""}
                     {entry.task?.project_id ? ` · project #${entry.task.project_id}` : ""}
@@ -154,7 +154,7 @@ export default function TimePage() {
                 <div className="text-right">
                   <p className="font-mono">{formatDuration(entry.billed_seconds)}</p>
                   {entry.adjustment_seconds !== 0 && (
-                    <p className="text-xs text-amber-300">
+                    <p className="text-xs text-amber-700 dark:text-amber-300">
                       {entry.adjustment_seconds > 0 ? "+" : ""}
                       {formatDuration(Math.abs(entry.adjustment_seconds))} adjusted
                     </p>

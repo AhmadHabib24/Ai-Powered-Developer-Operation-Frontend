@@ -60,40 +60,40 @@ export default function AnalysisReviewPage() {
     onError: (err) => toast.error(apiErrorMessage(err, "Could not reject.")),
   });
 
-  if (error) return <p className="text-rose-300">{apiErrorMessage(error, "Unable to load the analysis.")}</p>;
-  if (isLoading || !data) return <p className="text-slate-400">Loading analysis…</p>;
+  if (error) return <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(error, "Unable to load the analysis.")}</p>;
+  if (isLoading || !data) return <p className="text-muted">Loading analysis…</p>;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <Link href={`/projects/${params.id}`} className="text-sm text-amber-300">
+          <Link href={`/projects/${params.id}`} className="text-sm text-amber-700 dark:text-amber-300">
             Back to project
           </Link>
           <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Review requirement draft</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-400">{data.summary}</p>
+          <p className="mt-2 max-w-2xl text-sm text-muted">{data.summary}</p>
         </div>
         <Badge>{data.status}</Badge>
       </div>
       {(data.status === "queued" || data.status === "processing") && (
-        <p className="text-sm text-amber-200">Analysis is still running. This page will refresh when the draft is ready.</p>
+        <p className="text-sm text-amber-800 dark:text-amber-200">Analysis is still running. This page will refresh when the draft is ready.</p>
       )}
       {data.status === "failed" && (
-        <p className="text-sm text-rose-300">{data.error || "Analysis failed. Try a text-based PDF, TXT, or MD file."}</p>
+        <p className="text-sm text-rose-700 dark:text-rose-300">{data.error || "Analysis failed. Try a text-based PDF, TXT, or MD file."}</p>
       )}
       <Card>
         <CardTitle>Proposed structure</CardTitle>
         <div className="mt-4 space-y-3 text-sm">
           {data.structured_json?.modules.map((module) => (
-            <div key={module.name} className="rounded-xl bg-white/5 p-3">
+            <div key={module.name} className="rounded-xl bg-foreground/5 p-3">
               <p className="font-medium">{module.name}</p>
               {module.features.map((feature) => (
                 <div key={feature.name} className="mt-2 pl-3">
-                  <p className="text-amber-200">{feature.name}</p>
+                  <p className="text-amber-800 dark:text-amber-200">{feature.name}</p>
                   {feature.stories.map((story) => (
-                    <div key={story.title} className="mt-1 pl-3 text-slate-300">
+                    <div key={story.title} className="mt-1 pl-3 text-muted">
                       <p>{story.title}</p>
-                      <ul className="list-disc pl-5 text-xs text-slate-400">
+                      <ul className="list-disc pl-5 text-xs text-muted">
                         {story.tasks.map((task) => (
                           <li key={task.title}>
                             {task.title} · {task.estimated_hours}h · {task.priority}
@@ -112,7 +112,7 @@ export default function AnalysisReviewPage() {
         <Card>
           <CardTitle>Edit draft JSON</CardTitle>
           <textarea
-            className="mt-3 min-h-64 w-full rounded-lg border border-white/10 bg-slate-950 p-3 font-mono text-xs"
+            className="mt-3 min-h-64 w-full rounded-lg border border-border bg-background p-3 font-mono text-xs"
             value={jsonText}
             onChange={(event) => setJsonText(event.target.value)}
           />

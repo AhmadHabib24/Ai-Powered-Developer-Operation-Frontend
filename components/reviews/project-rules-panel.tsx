@@ -54,7 +54,7 @@ export function ProjectRulesPanel({ projectId, project }: { projectId: string; p
   return (
     <Card>
       <CardTitle>Coding rules</CardTitle>
-      <p className="mt-2 text-sm text-slate-400">
+      <p className="mt-2 text-sm text-muted">
         NEXORA reviews pushes and pull requests against these rules. Findings are advisory unless you enable a merge gate.
       </p>
       {can("projects.update") && project && (
@@ -70,7 +70,7 @@ export function ProjectRulesPanel({ projectId, project }: { projectId: string; p
           <label className="flex items-center gap-2">
             Block at
             <select
-              className="h-8 rounded-lg border border-white/10 bg-slate-950 px-2 text-xs"
+              className="h-8 rounded-lg border border-border bg-background px-2 text-xs"
               value={project.auto_block_on_severity ?? ""}
               onChange={(event) => policy.mutate({ auto_block_on_severity: event.target.value || null })}
             >
@@ -83,13 +83,13 @@ export function ProjectRulesPanel({ projectId, project }: { projectId: string; p
         </div>
       )}
       <div className="mt-4 space-y-2">
-        {rules?.length === 0 && <p className="text-sm text-slate-400">No rules yet.</p>}
+        {rules?.length === 0 && <p className="text-sm text-muted">No rules yet.</p>}
         {rules?.map((rule) => (
-          <div key={rule.id} className="rounded-xl bg-white/5 px-3 py-2 text-sm">
+          <div key={rule.id} className="rounded-xl bg-foreground/5 px-3 py-2 text-sm">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-medium">{rule.title}</p>
-                <p className="mt-1 text-xs text-slate-400">{rule.rule_text}</p>
+                <p className="mt-1 text-xs text-muted">{rule.rule_text}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge>{rule.stack}</Badge>
@@ -114,14 +114,14 @@ export function ProjectRulesPanel({ projectId, project }: { projectId: string; p
         >
           <Input placeholder="Rule title" value={title} onChange={(event) => setTitle(event.target.value)} />
           <div className="grid grid-cols-2 gap-2">
-            <select className="h-10 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm" value={category} onChange={(event) => setCategory(event.target.value)}>
+            <select className="h-10 rounded-lg border border-border bg-background px-3 text-sm" value={category} onChange={(event) => setCategory(event.target.value)}>
               {["architecture", "security", "style", "testing", "performance"].map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>
               ))}
             </select>
-            <select className="h-10 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm" value={stack} onChange={(event) => setStack(event.target.value)}>
+            <select className="h-10 rounded-lg border border-border bg-background px-3 text-sm" value={stack} onChange={(event) => setStack(event.target.value)}>
               {["general", "laravel", "nextjs"].map((item) => (
                 <option key={item} value={item}>
                   {item}
@@ -130,7 +130,7 @@ export function ProjectRulesPanel({ projectId, project }: { projectId: string; p
             </select>
           </div>
           <textarea
-            className="md:col-span-2 min-h-20 rounded-lg border border-white/10 bg-white/5 p-3 text-sm"
+            className="md:col-span-2 min-h-20 rounded-lg border border-border bg-foreground/5 p-3 text-sm"
             placeholder="What reviewers should enforce"
             value={ruleText}
             onChange={(event) => setRuleText(event.target.value)}

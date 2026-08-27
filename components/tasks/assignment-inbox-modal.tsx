@@ -46,18 +46,18 @@ export function AssignmentInboxModal() {
   if (!task) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] grid place-items-center bg-slate-950/80 p-4">
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-950 p-5 shadow-2xl">
-        <p className="text-xs uppercase tracking-[0.2em] text-amber-300">New assignment</p>
-        <h2 className="mt-2 text-xl font-semibold text-white">A task was assigned to you</h2>
-        <p className="mt-3 text-sm text-slate-300">{task.title}</p>
-        <p className="mt-1 text-xs text-slate-400">
+    <div className="fixed inset-0 z-[80] grid place-items-center bg-background/80 p-4">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-background p-5 shadow-2xl">
+        <p className="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">New assignment</p>
+        <h2 className="mt-2 text-xl font-semibold text-foreground">A task was assigned to you</h2>
+        <p className="mt-3 text-sm text-muted">{task.title}</p>
+        <p className="mt-1 text-xs text-muted">
           {task.project?.name ?? `Project #${task.project_id}`}
           {task.assignment?.assigned_by?.name ? ` · from ${task.assignment.assigned_by.name}` : ""}
           {task.estimated_hours ? ` · ${task.estimated_hours}h allocated` : ""}
         </p>
         {(pending.data?.length ?? 0) > 1 && (
-          <p className="mt-2 text-xs text-amber-200">{pending.data!.length - 1} more waiting after this one.</p>
+          <p className="mt-2 text-xs text-amber-800 dark:text-amber-200">{pending.data!.length - 1} more waiting after this one.</p>
         )}
         <div className="mt-5 flex flex-wrap gap-2">
           <Button disabled={accept.isPending || decline.isPending} onClick={() => accept.mutate()}>

@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const tones: Record<string, string> = {
-  green: "bg-emerald-400/15 text-emerald-300",
-  yellow: "bg-amber-400/15 text-amber-300",
-  red: "bg-rose-400/15 text-rose-300",
-  slate: "bg-white/10 text-slate-300",
-  cyan: "bg-amber-400/15 text-amber-300",
-  gold: "bg-amber-400/15 text-amber-300",
+  green: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+  yellow: "bg-amber-500/15 text-amber-800 dark:text-amber-300",
+  red: "bg-rose-500/15 text-rose-700 dark:text-rose-300",
+  slate: "bg-foreground/8 text-muted",
+  cyan: "bg-amber-500/15 text-amber-800 dark:text-amber-300",
+  gold: "bg-amber-500/15 text-amber-800 dark:text-amber-300",
 };
 
 export function Badge({

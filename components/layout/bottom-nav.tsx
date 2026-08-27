@@ -15,7 +15,7 @@ export function BottomNav() {
   const items = bottomNavItems(can);
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-slate-950/95 backdrop-blur-md lg:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 backdrop-blur-md lg:hidden">
       <div
         className="grid px-1 pt-1"
         style={{
@@ -30,11 +30,11 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-w-0 touch-manipulation flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-slate-400",
-                active && "text-amber-300",
+                "flex min-w-0 touch-manipulation flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-muted",
+                active && "text-amber-700 dark:text-amber-300",
               )}
             >
-              <item.icon className={cn("h-5 w-5", active && "text-amber-300")} />
+              <item.icon className={cn("h-5 w-5", active && "text-amber-700 dark:text-amber-300")} />
               <span className="w-full truncate text-center">{item.label}</span>
             </Link>
           );
@@ -43,11 +43,11 @@ export function BottomNav() {
           type="button"
           onClick={toggleMenu}
           className={cn(
-            "flex min-w-0 touch-manipulation flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-slate-400",
-            menuOpen && "text-amber-300",
+            "flex min-w-0 touch-manipulation flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-muted",
+            menuOpen && "text-amber-700 dark:text-amber-300",
           )}
         >
-          <Menu className={cn("h-5 w-5", menuOpen && "text-amber-300")} />
+          <Menu className={cn("h-5 w-5", menuOpen && "text-amber-700 dark:text-amber-300")} />
           <span>Menu</span>
         </button>
       </div>

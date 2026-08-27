@@ -46,19 +46,19 @@ export function CommandPalette() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 pt-[12vh] sm:p-8 sm:pt-24" onClick={() => setOpen(false)}>
-      <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-white/10 bg-slate-950" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-background" onClick={(e) => e.stopPropagation()}>
         <input
           autoFocus
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={`Jump to a page or ask ${assistant}…`}
-          className="h-12 w-full border-b border-white/10 bg-transparent px-4 text-sm outline-none"
+          className="h-12 w-full border-b border-border bg-transparent px-4 text-sm outline-none"
         />
         <div className="p-2">
           {visible.map((item) => (
             <button
               key={item.href}
-              className="flex w-full rounded-lg px-3 py-2 text-left text-sm text-slate-300 hover:bg-white/5"
+              className="flex w-full rounded-lg px-3 py-2 text-left text-sm text-muted hover:bg-foreground/5"
               onClick={() => {
                 setOpen(false);
                 router.push(item.href);

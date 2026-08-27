@@ -3,6 +3,7 @@
 import { BrandMark, BrandWordmark } from "@/components/brand/brand-mark";
 import { AppNav } from "@/components/layout/app-nav";
 import { useLayoutNav } from "@/components/layout/layout-nav-context";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useNovaCommand } from "@/components/nova-command/nova-command-context";
 import { useAuth } from "@/providers/auth-provider";
@@ -25,17 +26,17 @@ export function MobileDrawer() {
   return (
     <div className="fixed inset-0 z-40 lg:hidden">
       <button type="button" aria-label="Close menu" className="absolute inset-0 bg-black/60" onClick={() => setMenuOpen(false)} />
-      <aside className="absolute bottom-[calc(4.25rem+env(safe-area-inset-bottom))] left-0 top-0 flex w-[min(20rem,86vw)] flex-col border-r border-white/10 bg-slate-950 p-5 shadow-2xl">
+      <aside className="absolute bottom-[calc(4.25rem+env(safe-area-inset-bottom))] left-0 top-0 flex w-[min(20rem,86vw)] flex-col border-r border-border bg-card p-5 shadow-2xl">
         <div className="mb-6 flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             {branding.data?.logo_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={branding.data.logo_url} alt="" className="h-10 w-10 shrink-0 rounded-xl object-contain" />
             ) : (
-              <BrandMark variant="dark" className="h-10 w-10 shrink-0 rounded-xl" />
+              <BrandMark className="h-10 w-10 shrink-0 rounded-xl" />
             )}
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.28em] text-amber-400">Operations</p>
+              <p className="text-[10px] uppercase tracking-[0.28em] text-amber-700 dark:text-amber-300">Operations</p>
               <h1 className="mt-1 truncate text-lg">
                 <BrandWordmark />
               </h1>
@@ -60,9 +61,12 @@ export function MobileDrawer() {
               Engage {assistant}
             </Button>
           )}
-          <div className="rounded-xl border border-white/10 p-3 text-xs text-slate-400">
-            <p className="font-medium text-white">{user?.name}</p>
-            <p>{user?.roles?.[0]?.replace("_", " ")}</p>
+          <div className="flex items-center justify-between rounded-xl border border-border p-3 text-xs text-muted">
+            <div>
+              <p className="font-medium text-foreground">{user?.name}</p>
+              <p>{user?.roles?.[0]?.replace("_", " ")}</p>
+            </div>
+            <ThemeToggle />
           </div>
           <Button
             className="w-full"

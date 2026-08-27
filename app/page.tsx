@@ -18,5 +18,5 @@ export default function HomePage() {
     router.replace(userCanOpenCommand(user.permissions) ? "/dashboard" : "/me");
   }, [user, isLoading, router]);
 
-  return <div className="text-slate-400">Opening workspace…</div>;
+  return <div className="text-muted">Opening workspace…</div>;
 }

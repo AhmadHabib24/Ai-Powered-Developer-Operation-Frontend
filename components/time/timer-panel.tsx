@@ -32,6 +32,7 @@ export function TimerPanel({
   allocatedSeconds,
   billedSeconds,
   rejectedExtension,
+  size = "default",
 }: {
   session: TimeSession | null;
   taskId?: number;
@@ -39,6 +40,7 @@ export function TimerPanel({
   allocatedSeconds?: number;
   billedSeconds?: number;
   rejectedExtension?: boolean;
+  size?: "default" | "hero";
 }) {
   const queryClient = useQueryClient();
   const elapsed = useLiveSeconds(session);
@@ -93,14 +95,20 @@ export function TimerPanel({
 
   const pending = start.isPending || pause.isPending || resume.isPending || stop.isPending;
 
+  const hero = size === "hero";
+
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className={`font-mono text-3xl tabular-nums ${over ? "text-rose-300" : ""}`}>
+          <p
+            className={`font-mono tabular-nums tracking-tight ${hero ? "text-4xl sm:text-5xl" : "text-3xl"} ${
+              over ? "text-rose-700 dark:text-rose-300" : "text-foreground"
+            }`}
+          >
             {formatDuration(onThisTask || !taskId ? elapsed : 0)}
           </p>
-          <p className={`mt-1 text-sm ${over ? "text-rose-300" : "text-slate-400"}`}>
+          <p className={`mt-1 text-sm ${over ? "text-rose-700 dark:text-rose-300" : "text-muted"}`}>
             {session
               ? `${session.status} · ${session.task?.title ?? taskTitle ?? "Active task"}`
               : taskTitle ?? "No timer running"}

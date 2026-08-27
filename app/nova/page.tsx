@@ -109,11 +109,11 @@ function NovaChatPage() {
   );
 
   if (isLoading) {
-    return <p className="text-slate-400">Loading {assistant}…</p>;
+    return <p className="text-muted">Loading {assistant}…</p>;
   }
 
   if (!can("ai.use")) {
-    return <p className="text-rose-300">You do not have permission to talk to {assistant}.</p>;
+    return <p className="text-rose-700 dark:text-rose-300">You do not have permission to talk to {assistant}.</p>;
   }
 
   return (
@@ -136,7 +136,7 @@ function NovaChatPage() {
             <li key={item.id}>
               <button
                 type="button"
-                className={`w-full rounded-lg px-2 py-1.5 text-left ${conversationId === item.id ? "bg-amber-400/10 text-amber-100" : "text-slate-400 hover:bg-white/5"}`}
+                className={`w-full rounded-lg px-2 py-1.5 text-left ${conversationId === item.id ? "bg-amber-400/10 text-amber-800 dark:text-amber-100" : "text-muted hover:bg-foreground/5"}`}
                 onClick={() => loadConversation(item.id)}
               >
                 {item.title || `Chat ${item.id}`}
@@ -147,13 +147,13 @@ function NovaChatPage() {
       </Card>
       <div className="space-y-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Assistant</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">Assistant</p>
           <h1 className="text-2xl font-semibold sm:text-3xl">Talk to {assistant}</h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-muted">
             Live tools over your projects. Writes wait for confirmation unless a project is in auto-execute.
           </p>
           {(recording || voiceMutation.isPending || chatMutation.isPending) && (
-            <p className="mt-2 text-xs uppercase tracking-wide text-amber-300">
+            <p className="mt-2 text-xs uppercase tracking-wide text-amber-700 dark:text-amber-300">
               {recording
                 ? branding.data?.voice.listening ?? "Listening"
                 : voiceMutation.isPending || chatMutation.isPending
@@ -164,19 +164,19 @@ function NovaChatPage() {
         </div>
         <Card className="flex min-h-[420px] flex-col">
           <div className="flex-1 space-y-3 overflow-y-auto pr-1">
-            {messages.length === 0 && <p className="text-sm text-slate-300">{greeting}</p>}
+            {messages.length === 0 && <p className="text-sm text-muted">{greeting}</p>}
             {messages.map((item) => (
-              <div key={item.id} className={`rounded-xl px-3 py-2 text-sm ${item.role === "user" ? "ml-4 bg-amber-400/10 text-amber-50 sm:ml-8" : "mr-4 bg-white/5 text-slate-200 sm:mr-8"}`}>
-                <p className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">{item.role}</p>
+              <div key={item.id} className={`rounded-xl px-3 py-2 text-sm text-foreground ${item.role === "user" ? "ml-4 bg-amber-400/10 sm:ml-8" : "mr-4 bg-foreground/5 sm:mr-8"}`}>
+                <p className="mb-1 text-[10px] uppercase tracking-wide text-muted">{item.role}</p>
                 <p className="whitespace-pre-wrap">{item.content}</p>
               </div>
             ))}
             {pending.map((action) => (
-              <div key={action.id} className="rounded-xl border border-amber-400/30 bg-amber-400/10 p-3 text-sm text-amber-50">
+              <div key={action.id} className="rounded-xl border border-amber-400/30 bg-amber-400/10 p-3 text-sm text-foreground">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="font-medium">Pending: {action.tool_name.replaceAll("_", " ")}</p>
-                    <p className="mt-1 text-xs text-amber-100/80">Say yes in this chat to confirm. Mode: {action.permission_mode}</p>
+                    <p className="mt-1 text-xs text-amber-800 dark:text-amber-100/80">Say yes in this chat to confirm. Mode: {action.permission_mode}</p>
                   </div>
                   <Badge>approval</Badge>
                 </div>
@@ -219,7 +219,7 @@ function NovaChatPage() {
             </div>
           </form>
           {!sttReady && (
-            <p className="mt-2 text-xs text-slate-500">Microphone is disabled until SPEECH_TO_TEXT_PROVIDER is configured. Typed chat still uses live tools.</p>
+            <p className="mt-2 text-xs text-muted">Microphone is disabled until SPEECH_TO_TEXT_PROVIDER is configured. Typed chat still uses live tools.</p>
           )}
         </Card>
       </div>
@@ -229,7 +229,7 @@ function NovaChatPage() {
 
 export default function NovaPage() {
   return (
-    <Suspense fallback={<p className="text-slate-400">Loading NORA…</p>}>
+    <Suspense fallback={<p className="text-muted">Loading NORA…</p>}>
       <NovaChatPage />
     </Suspense>
   );

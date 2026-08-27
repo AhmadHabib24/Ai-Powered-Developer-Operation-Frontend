@@ -12,7 +12,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const SELECT = "h-10 w-full rounded-lg border border-white/10 bg-slate-950 px-3 text-sm text-white";
+const SELECT = "h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground";
 
 type TeamFormState = {
   name: string;
@@ -122,9 +122,9 @@ export default function TeamsPage() {
     onError: (err) => toast.error(apiErrorMessage(err, "Could not remove this member.")),
   });
 
-  if (authLoading) return <p className="text-slate-400">Loading teams…</p>;
-  if (!can("teams.view")) return <p className="text-rose-300">You do not have permission to view this.</p>;
-  if (teams.error) return <p className="text-rose-300">{apiErrorMessage(teams.error, "Unable to load teams.")}</p>;
+  if (authLoading) return <p className="text-muted">Loading teams…</p>;
+  if (!can("teams.view")) return <p className="text-rose-700 dark:text-rose-300">You do not have permission to view this.</p>;
+  if (teams.error) return <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(teams.error, "Unable to load teams.")}</p>;
 
   const canCreate = can("teams.create");
   const canUpdate = can("teams.update");
@@ -137,7 +137,7 @@ export default function TeamsPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold sm:text-3xl">Teams</h1>
-          <p className="mt-1 text-sm text-slate-400">Create a team, change its lead, or delete it when the group is no longer needed.</p>
+          <p className="mt-1 text-sm text-muted">Create a team, change its lead, or delete it when the group is no longer needed.</p>
         </div>
         {canCreate && editingId !== "new" && (
           <Button
@@ -177,12 +177,12 @@ export default function TeamsPage() {
             </select>
           </div>
           <textarea
-            className="min-h-24 w-full rounded-lg border border-white/10 bg-white/5 p-3 text-sm"
+            className="min-h-24 w-full rounded-lg border border-border bg-foreground/5 p-3 text-sm"
             placeholder="Description"
             value={form.description}
             onChange={(e) => setField("description", e.target.value)}
           />
-          <label className="flex items-center gap-2 text-sm text-slate-300">
+          <label className="flex items-center gap-2 text-sm text-muted">
             <input type="checkbox" checked={form.is_active} onChange={(e) => setField("is_active", e.target.checked)} />
             Active team
           </label>
@@ -192,7 +192,7 @@ export default function TeamsPage() {
         </Card>
       )}
 
-      {teams.isLoading && <p className="text-slate-400">Loading teams…</p>}
+      {teams.isLoading && <p className="text-muted">Loading teams…</p>}
       <div className="grid gap-4 md:grid-cols-2">
         {teams.data?.data.map((team) => {
           const memberIds = new Set((team.members ?? []).map((member) => member.id));
@@ -202,11 +202,11 @@ export default function TeamsPage() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-lg font-medium">{team.name}</p>
-                  <p className="text-sm text-slate-400">{team.description || "No description"}</p>
+                  <p className="text-sm text-muted">{team.description || "No description"}</p>
                 </div>
                 <Badge tone={team.is_active ? "cyan" : undefined}>{team.is_active ? "active" : "inactive"}</Badge>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted">
                 Lead {team.lead?.name ?? "—"} · {team.members?.length ?? 0} members
               </p>
               {(canUpdate || canDelete) && (
@@ -240,14 +240,14 @@ export default function TeamsPage() {
                 </div>
               )}
               {canMembers && (
-                <div className="space-y-3 border-t border-white/10 pt-4">
-                  <p className="text-sm font-medium text-slate-300">Members</p>
+                <div className="space-y-3 border-t border-border pt-4">
+                  <p className="text-sm font-medium text-muted">Members</p>
                   <ul className="space-y-2 text-sm">
                     {(team.members ?? []).map((member) => (
-                      <li key={member.id} className="flex items-center justify-between gap-2 rounded-lg bg-white/5 px-3 py-2">
+                      <li key={member.id} className="flex items-center justify-between gap-2 rounded-lg bg-foreground/5 px-3 py-2">
                         <span>
                           {member.name}
-                          {team.lead?.id === member.id ? <span className="ml-2 text-xs text-amber-300">lead</span> : null}
+                          {team.lead?.id === member.id ? <span className="ml-2 text-xs text-amber-700 dark:text-amber-300">lead</span> : null}
                         </span>
                         <Button
                           size="sm"
@@ -263,7 +263,7 @@ export default function TeamsPage() {
                         </Button>
                       </li>
                     ))}
-                    {(team.members?.length ?? 0) === 0 && <li className="text-slate-500">No members yet.</li>}
+                    {(team.members?.length ?? 0) === 0 && <li className="text-muted">No members yet.</li>}
                   </ul>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <select

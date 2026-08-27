@@ -77,15 +77,15 @@ export default function ProjectDetailPage() {
     onError: (error) => toast.error(apiErrorMessage(error, "Could not update project status.")),
   });
 
-  if (isLoading || !project) return <p className="text-slate-400">Loading project…</p>;
+  if (isLoading || !project) return <p className="text-muted">Loading project…</p>;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Project</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">Project</p>
           <h1 className="text-2xl font-semibold sm:text-3xl">{project.name}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-400">{project.description}</p>
+          <p className="mt-2 max-w-2xl text-sm text-muted">{project.description}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {can("ai.use") && (
@@ -96,7 +96,7 @@ export default function ProjectDetailPage() {
           {can("projects.update") ? (
             <select
               aria-label="Project status"
-              className="h-8 rounded-full border border-white/10 bg-slate-950 px-3 text-xs capitalize"
+              className="h-8 rounded-full border border-border bg-background px-3 text-xs capitalize"
               value={project.status}
               disabled={statusMutation.isPending}
               onChange={(event) => statusMutation.mutate(event.target.value)}
@@ -117,8 +117,8 @@ export default function ProjectDetailPage() {
       </div>
       <Card>
         <CardTitle>Why this health</CardTitle>
-        <p className="mt-2 text-sm text-slate-300">{project.health_reason}</p>
-        <p className="mt-2 text-xs text-slate-500">Deadline {formatDate(project.deadline)}</p>
+        <p className="mt-2 text-sm text-muted">{project.health_reason}</p>
+        <p className="mt-2 text-xs text-muted">Deadline {formatDate(project.deadline)}</p>
       </Card>
       {can("tasks.create") && (
         <Card>
@@ -127,13 +127,13 @@ export default function ProjectDetailPage() {
             <Input placeholder="Task title" {...form.register("title")} />
             <Input type="number" step="0.5" placeholder="Estimated hours" {...form.register("estimated_hours")} />
             <Input type="date" {...form.register("due_date")} />
-            <select className="h-10 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm" {...form.register("priority")}>
+            <select className="h-10 rounded-lg border border-border bg-background px-3 text-sm" {...form.register("priority")}>
               <option value="critical">Critical</option>
               <option value="high">High</option>
               <option value="medium">Medium</option>
               <option value="low">Low</option>
             </select>
-            <select className="h-10 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm" {...form.register("assignee_id")}>
+            <select className="h-10 rounded-lg border border-border bg-background px-3 text-sm" {...form.register("assignee_id")}>
               <option value="">Assign later</option>
               {(users?.data ?? project.members ?? []).map((person) => (
                 <option key={person.id} value={person.id}>
@@ -141,7 +141,7 @@ export default function ProjectDetailPage() {
                 </option>
               ))}
             </select>
-            <textarea className="md:col-span-2 min-h-20 rounded-lg border border-white/10 bg-white/5 p-3 text-sm" placeholder="Description" {...form.register("description")} />
+            <textarea className="md:col-span-2 min-h-20 rounded-lg border border-border bg-foreground/5 p-3 text-sm" placeholder="Description" {...form.register("description")} />
             <Button disabled={createMutation.isPending}>Create task</Button>
           </form>
         </Card>
@@ -149,24 +149,24 @@ export default function ProjectDetailPage() {
       <ProjectRequirementsPanel projectId={params.id} />
       <ProjectRulesPanel projectId={params.id} project={project} />
       <ProjectReviewsPanel projectId={params.id} />
-      <Suspense fallback={<p className="text-sm text-slate-400">Loading GitHub…</p>}>
+      <Suspense fallback={<p className="text-sm text-muted">Loading GitHub…</p>}>
         <ProjectGitPanel projectId={params.id} />
       </Suspense>
       <Card>
         <CardTitle>Tasks</CardTitle>
         <div className="mt-4 space-y-2">
           {tasks?.data.map((task) => (
-            <div key={task.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white/5 px-4 py-3">
+            <div key={task.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-foreground/5 px-4 py-3">
               <div>
-                <Link href={`/tasks/${task.id}`} className="font-medium hover:text-amber-200">
+                <Link href={`/tasks/${task.id}`} className="font-medium hover:text-amber-700 dark:hover:text-amber-800 dark:text-amber-200">
                   {task.title}
                 </Link>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-muted">
                   {task.assignee?.name ?? "Unassigned"} · {task.estimated_hours ?? 0}h
                   {task.assignment_status ? ` · ${task.assignment_status}` : ""}
                 </p>
                 {task.latest_comment && (
-                  <p className="mt-1 truncate text-xs text-amber-200">{task.latest_comment.user?.name}: {task.latest_comment.body}</p>
+                  <p className="mt-1 truncate text-xs text-amber-800 dark:text-amber-200">{task.latest_comment.user?.name}: {task.latest_comment.body}</p>
                 )}
               </div>
               <div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function ProjectDetailPage() {
                 <Badge tone={task.is_overdue ? "red" : "slate"}>{task.status.replace("_", " ")}</Badge>
                 {can("tasks.update") && (
                   <select
-                    className="h-8 rounded-lg border border-white/10 bg-slate-950 px-2 text-xs"
+                    className="h-8 rounded-lg border border-border bg-background px-2 text-xs"
                     defaultValue={task.status}
                     onChange={(event) =>
                       changeTaskStatus(task.id, event.target.value).then(() => {
@@ -195,7 +195,7 @@ export default function ProjectDetailPage() {
                 )}
                 {can("tasks.assign") && (
                   <select
-                    className="h-8 rounded-lg border border-white/10 bg-slate-950 px-2 text-xs disabled:opacity-50"
+                    className="h-8 rounded-lg border border-border bg-background px-2 text-xs disabled:opacity-50"
                     defaultValue={task.assignee?.id ?? ""}
                     disabled={task.transfer_locked}
                     title={task.transfer_locked ? "Cannot transfer while a timer is running" : undefined}
@@ -223,7 +223,7 @@ export default function ProjectDetailPage() {
               </div>
             </div>
           ))}
-          {tasks?.data.length === 0 && <p className="text-sm text-slate-400">No tasks yet.</p>}
+          {tasks?.data.length === 0 && <p className="text-sm text-muted">No tasks yet.</p>}
         </div>
       </Card>
     </div>

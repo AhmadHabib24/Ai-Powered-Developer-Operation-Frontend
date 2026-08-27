@@ -92,7 +92,7 @@ export default function PerformancePage() {
   });
 
   if (!can("performance.view")) {
-    return <p className="text-rose-300">You do not have permission to view performance.</p>;
+    return <p className="text-rose-700 dark:text-rose-300">You do not have permission to view performance.</p>;
   }
 
   const scoreChart = (analytics.data?.developers ?? []).map((row) => ({ name: row.user.name, score: row.score ?? 0 }));
@@ -101,9 +101,9 @@ export default function PerformancePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Evidence ledger</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">Evidence ledger</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Performance</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-400">
+          <p className="mt-2 max-w-2xl text-sm text-muted">
             Points are append-only. Scores are a 0–100 rollup of delivery, punctuality, review hygiene, and ledger points. Commit count is never the only input.
           </p>
         </div>
@@ -178,7 +178,7 @@ export default function PerformancePage() {
           <Card>
             <CardTitle>Manual award</CardTitle>
             <form className="mt-4 grid gap-3" onSubmit={awardForm.handleSubmit((values) => award.mutate(values))}>
-              <select className="h-10 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm" {...awardForm.register("user_id")}>
+              <select className="h-10 rounded-lg border border-border bg-background px-3 text-sm" {...awardForm.register("user_id")}>
                 <option value="">Person</option>
                 {(users.data?.data ?? []).map((user) => (
                   <option key={user.id} value={user.id}>
@@ -186,7 +186,7 @@ export default function PerformancePage() {
                   </option>
                 ))}
               </select>
-              <select className="h-10 rounded-lg border border-white/10 bg-slate-950 px-3 text-sm" {...awardForm.register("rule_id")}>
+              <select className="h-10 rounded-lg border border-border bg-background px-3 text-sm" {...awardForm.register("rule_id")}>
                 <option value="">Rule</option>
                 {(rules.data ?? []).filter((rule) => rule.is_active).map((rule) => (
                   <option key={rule.id} value={rule.id}>
@@ -206,10 +206,10 @@ export default function PerformancePage() {
         <CardTitle>Rules</CardTitle>
         <div className="mt-4 space-y-2">
           {(rules.data ?? []).map((rule) => (
-            <div key={rule.id} className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3">
+            <div key={rule.id} className="flex items-center justify-between rounded-xl bg-foreground/5 px-4 py-3">
               <div>
                 <p className="font-medium">{rule.name}</p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-muted">
                   {rule.slug} · {rule.conditions?.event ?? "manual"}
                 </p>
               </div>
@@ -228,9 +228,9 @@ export default function PerformancePage() {
       <Card>
         <CardTitle>Ledger</CardTitle>
         <div className="mt-4 space-y-2">
-          {(points.data ?? []).length === 0 && <p className="text-sm text-slate-400">No points recorded yet.</p>}
+          {(points.data ?? []).length === 0 && <p className="text-sm text-muted">No points recorded yet.</p>}
           {(points.data ?? []).map((row) => (
-            <div key={row.id} className="rounded-xl bg-white/5 px-4 py-3 text-sm">
+            <div key={row.id} className="rounded-xl bg-foreground/5 px-4 py-3 text-sm">
               <div className="flex items-center justify-between">
                 <p className="font-medium">
                   {row.user?.name ?? "User"} · {row.points > 0 ? "+" : ""}
@@ -238,7 +238,7 @@ export default function PerformancePage() {
                 </p>
                 <Badge>{row.rule?.name ?? "manual"}</Badge>
               </div>
-              <p className="mt-1 text-slate-400">{row.reason}</p>
+              <p className="mt-1 text-muted">{row.reason}</p>
             </div>
           ))}
         </div>
@@ -246,15 +246,15 @@ export default function PerformancePage() {
       {monthly.data && (
         <Card>
           <CardTitle>Monthly CTO summary</CardTitle>
-          <p className="mt-2 text-sm text-slate-400">{monthly.data.note}</p>
-          <p className="mt-2 text-sm text-slate-300">
+          <p className="mt-2 text-sm text-muted">{monthly.data.note}</p>
+          <p className="mt-2 text-sm text-muted">
             {monthly.data.completed_tasks} completions · {monthly.data.points} points · {monthly.data.period.from} to {monthly.data.period.to}
           </p>
           <div className="mt-3 space-y-2">
             {monthly.data.developers.map((row) => (
-              <div key={row.user.id} className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-2 text-sm">
+              <div key={row.user.id} className="flex items-center justify-between rounded-xl bg-foreground/5 px-4 py-2 text-sm">
                 <span>{row.user.name}</span>
-                <span className="text-slate-400">
+                <span className="text-muted">
                   {row.completed} done · {row.points} pts · score {row.score ?? "—"} · {row.hours}h
                 </span>
               </div>
@@ -267,11 +267,11 @@ export default function PerformancePage() {
           <CardTitle>Weekly reports</CardTitle>
           <div className="mt-3 space-y-2 text-sm">
             {weekly.data?.slice(0, 8).map((report) => (
-              <div key={report.id} className="rounded-xl bg-white/5 px-4 py-3">
+              <div key={report.id} className="rounded-xl bg-foreground/5 px-4 py-3">
                 <p className="font-medium">
                   {report.user?.name ?? `User ${report.user_id}`} · week of {report.week_start}
                 </p>
-                <p className="text-slate-400">{report.ai_summary}</p>
+                <p className="text-muted">{report.ai_summary}</p>
               </div>
             ))}
           </div>

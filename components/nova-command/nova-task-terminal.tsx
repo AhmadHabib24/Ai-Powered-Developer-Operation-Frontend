@@ -23,7 +23,7 @@ function TaskLines({
           key={`${heading}-${task.id}`}
           type="button"
           onClick={() => onOpen(task.id)}
-          className="block w-full truncate text-left text-amber-100 hover:text-white"
+          className="block w-full truncate text-left text-amber-800 dark:text-amber-100 hover:text-foreground"
         >
           <span className="text-amber-700">›</span> {task.timer ? "TIMER " : ""}
           {task.assignee ?? "unassigned"} · {task.title}
@@ -46,7 +46,7 @@ export function NovaTaskTerminal({ enabled, onOpenTask }: { enabled: boolean; on
 
   return (
     <MeshTerminal title="Task mesh" liveLabel={board.isFetching ? "sync" : "live"} className="h-full min-h-0 lg:min-h-[280px]">
-      {board.error && <p className="text-rose-300">{apiErrorMessage(board.error, "Task uplink denied.")}</p>}
+      {board.error && <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(board.error, "Task uplink denied.")}</p>}
       {data && (
         <div className="space-y-4">
           <p className="text-amber-500">

@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import { Toaster } from "sonner";
+import { AppToaster } from "@/components/layout/app-toaster";
 import { AppShell } from "@/components/layout/app-shell";
 import { BRAND } from "@/lib/brand";
 import { AuthProvider } from "@/providers/auth-provider";
 import { QueryProvider } from "@/providers/query-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
@@ -29,14 +30,16 @@ export const dynamic = "force-dynamic";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geist.variable} antialiased`}>
-        <QueryProvider>
-          <AuthProvider>
-            <AppShell>{children}</AppShell>
-            <Toaster theme="dark" position="top-right" />
-          </AuthProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <AppShell>{children}</AppShell>
+              <AppToaster />
+            </AuthProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

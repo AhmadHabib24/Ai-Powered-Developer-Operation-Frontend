@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 export default function GitPage() {
   return (
-    <Suspense fallback={<p className="text-slate-400">Loading GitHub…</p>}>
+    <Suspense fallback={<p className="text-muted">Loading GitHub…</p>}>
       <GitWorkspace />
     </Suspense>
   );

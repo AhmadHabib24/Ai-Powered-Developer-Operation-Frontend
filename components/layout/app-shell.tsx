@@ -30,7 +30,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {isPublic || (!isLoading && !user) ? (
         children
       ) : isLoading ? (
-        <div className="grid min-h-dvh place-items-center text-slate-400">Loading workspace…</div>
+        <div className="grid min-h-dvh place-items-center text-muted">Loading workspace…</div>
       ) : (
         <LayoutNavProvider>
           <div className="flex min-h-dvh">

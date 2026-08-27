@@ -94,7 +94,7 @@ export default function TaskDetailPage() {
     onError: (error) => toast.error(apiErrorMessage(error, "Upload failed.")),
   });
 
-  if (isLoading || !task) return <p className="text-slate-400">Loading task…</p>;
+  if (isLoading || !task) return <p className="text-muted">Loading task…</p>;
 
   const assignmentStatus = task.assignment_status ?? task.assignment?.status;
   const pendingForMe = assignmentStatus === "pending" && task.assignee?.id === user?.id;
@@ -111,12 +111,12 @@ export default function TaskDetailPage() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           {task.project && (
-            <Link href={`/projects/${task.project.id}`} className="text-sm text-amber-300">
+            <Link href={`/projects/${task.project.id}`} className="text-sm text-amber-700 dark:text-amber-300">
               {task.project.name}
             </Link>
           )}
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">{task.title}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-400">{task.description}</p>
+          <p className="mt-2 max-w-2xl text-sm text-muted">{task.description}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge>{task.status.replace("_", " ")}</Badge>
@@ -132,7 +132,7 @@ export default function TaskDetailPage() {
       {pendingForMe && (
         <Card>
           <CardTitle>This task was assigned to you</CardTitle>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-muted">
             {task.assignment?.assigned_by?.name ?? "Someone"} assigned this work. Receive it to start, or decline so the assigner can see your decision.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -151,15 +151,15 @@ export default function TaskDetailPage() {
           <CardTitle>Assignee</CardTitle>
           <p className="mt-2">{task.assignee?.name ?? "Unassigned"}</p>
           {task.assignment?.assigned_by && (
-            <p className="mt-1 text-xs text-slate-400">Assigned by {task.assignment.assigned_by.name}</p>
+            <p className="mt-1 text-xs text-muted">Assigned by {task.assignment.assigned_by.name}</p>
           )}
           {task.suggested_assignee && (
-            <p className="mt-2 text-xs text-amber-200">
+            <p className="mt-2 text-xs text-amber-800 dark:text-amber-200">
               Suggested {task.suggested_assignee.name}
               {task.assignment_confidence ? ` · ${task.assignment_confidence}` : ""}
             </p>
           )}
-          {task.assignment_reason && <p className="mt-1 text-xs text-slate-400">{task.assignment_reason}</p>}
+          {task.assignment_reason && <p className="mt-1 text-xs text-muted">{task.assignment_reason}</p>}
           {can("tasks.assign") && (
             <div className="mt-3 flex flex-wrap gap-2">
               <Button size="sm" variant="secondary" disabled={recommend.isPending || task.transfer_locked} onClick={() => recommend.mutate(false)}>
@@ -171,7 +171,7 @@ export default function TaskDetailPage() {
             </div>
           )}
           {task.transfer_locked && (
-            <p className="mt-2 text-xs text-amber-200">Cannot transfer while a timer is running or paused.</p>
+            <p className="mt-2 text-xs text-amber-800 dark:text-amber-200">Cannot transfer while a timer is running or paused.</p>
           )}
         </Card>
         <Card>
@@ -183,7 +183,7 @@ export default function TaskDetailPage() {
           <p className="mt-2">
             {task.estimated_hours ?? 0}h estimate / {task.actual_hours ?? 0}h logged
           </p>
-          <p className={`mt-1 text-xs ${over ? "text-rose-300" : "text-slate-400"}`}>
+          <p className={`mt-1 text-xs ${over ? "text-rose-700 dark:text-rose-300" : "text-muted"}`}>
             {over ? `${formatDuration(Math.abs(remaining))} over allocation` : `${formatDuration(Math.max(0, remaining))} remaining`}
           </p>
         </Card>
@@ -192,7 +192,7 @@ export default function TaskDetailPage() {
       {canTime && (
         <Card>
           <CardTitle>Timer</CardTitle>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-muted">
             Allocated time does not stop the clock. It keeps counting until you stop it.
           </p>
           <div className="mt-4">
@@ -209,34 +209,34 @@ export default function TaskDetailPage() {
       )}
 
       {pendingForMe && (
-        <p className="text-sm text-amber-200">Receive the assignment before you can run the timer.</p>
+        <p className="text-sm text-amber-800 dark:text-amber-200">Receive the assignment before you can run the timer.</p>
       )}
 
       {isAssignee && accepted && (
         <Card className={rejectedExtension ? "border-rose-400/40" : undefined}>
           <CardTitle>Need more time</CardTitle>
           {pendingExtension && (
-            <p className="mt-2 text-sm text-amber-200">
+            <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
               Waiting on the CTO for {pendingExtension.requested_minutes} more minutes. {pendingExtension.reason}
             </p>
           )}
           {rejectedExtension && !pendingExtension && (
-            <p className="mt-2 text-sm text-rose-300">
+            <p className="mt-2 text-sm text-rose-700 dark:text-rose-300">
               Extra time was declined. The timer stays red. When you stop it and submit the task, overtime is reported with a negative performance mark.
             </p>
           )}
           {!pendingExtension && !task.can_request_extension && remaining > 600 && (
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-muted">
               You can request more time in the last 10 minutes before the allocated time runs out.
             </p>
           )}
           {task.can_request_extension && !pendingExtension && (
             <div className="mt-3 space-y-3">
-              <p className="text-sm text-slate-300">
+              <p className="text-sm text-muted">
                 Ask the CTO how many extra minutes you need and why. The timer keeps running either way.
               </p>
               <input
-                className="h-10 w-full max-w-xs rounded-lg border border-white/10 bg-white/5 px-3 text-sm"
+                className="h-10 w-full max-w-xs rounded-lg border border-border bg-foreground/5 px-3 text-sm"
                 type="number"
                 min={15}
                 max={480}
@@ -244,7 +244,7 @@ export default function TaskDetailPage() {
                 onChange={(event) => setExtraMinutes(event.target.value)}
               />
               <textarea
-                className="min-h-24 w-full rounded-lg border border-white/10 bg-white/5 p-3 text-sm"
+                className="min-h-24 w-full rounded-lg border border-border bg-foreground/5 p-3 text-sm"
                 placeholder="Why do you need more time?"
                 value={extraReason}
                 onChange={(event) => setExtraReason(event.target.value)}
@@ -257,7 +257,7 @@ export default function TaskDetailPage() {
           {(task.time_extensions ?? []).length > 0 && (
             <div className="mt-4 space-y-2">
               {(task.time_extensions ?? []).map((item) => (
-                <p key={item.id} className="text-xs text-slate-400">
+                <p key={item.id} className="text-xs text-muted">
                   {item.requested_minutes} min · {item.status}
                   {item.review_note ? ` · ${item.review_note}` : ""}
                 </p>
@@ -270,7 +270,7 @@ export default function TaskDetailPage() {
       {task.acceptance_criteria && (
         <Card>
           <CardTitle>Acceptance criteria</CardTitle>
-          <p className="mt-2 whitespace-pre-wrap text-sm text-slate-300">{task.acceptance_criteria}</p>
+          <p className="mt-2 whitespace-pre-wrap text-sm text-muted">{task.acceptance_criteria}</p>
         </Card>
       )}
 
@@ -296,9 +296,9 @@ export default function TaskDetailPage() {
       <Card>
         <CardTitle>Files</CardTitle>
         <div className="mt-3 space-y-2">
-          {(task.attachments ?? []).length === 0 && <p className="text-sm text-slate-400">No files yet.</p>}
+          {(task.attachments ?? []).length === 0 && <p className="text-sm text-muted">No files yet.</p>}
           {(task.attachments ?? []).map((file) => (
-            <div key={file.id} className="rounded-lg bg-white/5 px-3 py-2 text-sm">
+            <div key={file.id} className="rounded-lg bg-foreground/5 px-3 py-2 text-sm">
               {file.original_name} · {Math.round(file.size_bytes / 1024)} KB
             </div>
           ))}
@@ -306,7 +306,7 @@ export default function TaskDetailPage() {
         {can("tasks.update") && (
           <input
             type="file"
-            className="mt-4 text-sm text-slate-300"
+            className="mt-4 text-sm text-muted"
             onChange={(event) => {
               const file = event.target.files?.[0];
               if (file) upload.mutate(file);
@@ -320,13 +320,13 @@ export default function TaskDetailPage() {
         <CardTitle>Comments</CardTitle>
         <div className="mt-3 space-y-3">
           {task.comments?.map((comment) => (
-            <div key={comment.id} className="rounded-lg bg-white/5 p-3 text-sm">
-              <p className="text-xs text-slate-400">{comment.user?.name}</p>
+            <div key={comment.id} className="rounded-lg bg-foreground/5 p-3 text-sm">
+              <p className="text-xs text-muted">{comment.user?.name}</p>
               <p>{comment.body}</p>
             </div>
           ))}
         </div>
-        <textarea className="mt-4 min-h-24 w-full rounded-lg border border-white/10 bg-white/5 p-3 text-sm" value={body} onChange={(e) => setBody(e.target.value)} />
+        <textarea className="mt-4 min-h-24 w-full rounded-lg border border-border bg-foreground/5 p-3 text-sm" value={body} onChange={(e) => setBody(e.target.value)} />
         <Button className="mt-3" disabled={!body || commentMutation.isPending} onClick={() => commentMutation.mutate()}>
           Comment
         </Button>

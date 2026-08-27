@@ -47,21 +47,21 @@ function LiveTaskRow({ task }: { task: Task }) {
   return (
     <Link
       href={`/tasks/${task.id}`}
-      className="flex flex-col gap-2 rounded-xl bg-white/5 px-4 py-3 hover:bg-white/10 sm:flex-row sm:items-center sm:justify-between"
+      className="flex flex-col gap-2 rounded-xl bg-foreground/5 px-4 py-3 hover:bg-foreground/10 sm:flex-row sm:items-center sm:justify-between"
     >
       <div className="min-w-0">
-        <p className="font-medium text-white">{task.title}</p>
-        <p className="mt-1 truncate text-xs text-slate-400">
+        <p className="font-medium text-foreground">{task.title}</p>
+        <p className="mt-1 truncate text-xs text-muted">
           {task.project?.name ?? `Project #${task.project_id}`}
           {task.description ? ` · ${task.description}` : ""}
         </p>
         {task.latest_comment && (
-          <p className="mt-1 truncate text-xs text-amber-200">
+          <p className="mt-1 truncate text-xs text-amber-800 dark:text-amber-200">
             {task.latest_comment.user?.name ?? "Someone"} commented {timeAgo(task.latest_comment.created_at)}: {task.latest_comment.body}
           </p>
         )}
         {task.latest_attachment && (
-          <p className="mt-1 truncate text-xs text-slate-300">
+          <p className="mt-1 truncate text-xs text-muted">
             File: {task.latest_attachment.original_name} · {timeAgo(task.latest_attachment.created_at)}
           </p>
         )}
@@ -78,8 +78,8 @@ function LiveTaskRow({ task }: { task: Task }) {
           <Badge tone={task.assignment_status === "pending" ? "yellow" : "cyan"}>{received}</Badge>
         )}
         {task.transfer_locked && <Badge tone="yellow">Timer locked</Badge>}
-        <span className="text-xs text-slate-400">{task.estimated_hours ?? 0}h allocated</span>
-        <span className="text-xs text-slate-500">{task.assignee?.name ?? "Unassigned"}</span>
+        <span className="text-xs text-muted">{task.estimated_hours ?? 0}h allocated</span>
+        <span className="text-xs text-muted">{task.assignee?.name ?? "Unassigned"}</span>
       </div>
     </Link>
   );
@@ -116,9 +116,9 @@ export default function TasksPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Work</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">Work</p>
         <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Tasks</h1>
-        <p className="mt-2 max-w-2xl text-sm text-slate-400">
+        <p className="mt-2 max-w-2xl text-sm text-muted">
           Live work, comments, and files show here. Time reports stay on the Time page.
         </p>
       </div>
@@ -127,9 +127,9 @@ export default function TasksPage() {
           <CardTitle>Time extension requests</CardTitle>
           <div className="mt-4 space-y-3">
             {pendingExtensions.data?.data.map((item) => (
-              <div key={item.id} className="rounded-xl bg-white/5 px-4 py-3">
+              <div key={item.id} className="rounded-xl bg-foreground/5 px-4 py-3">
                 <p className="font-medium">{item.task?.title ?? `Task #${item.task_id}`}</p>
-                <p className="mt-1 text-sm text-slate-300">
+                <p className="mt-1 text-sm text-muted">
                   {item.user?.name} asked for {item.requested_minutes} more minutes. {item.reason}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -139,7 +139,7 @@ export default function TasksPage() {
                   <Button size="sm" variant="danger" disabled={review.isPending} onClick={() => review.mutate({ id: item.id, accept: false })}>
                     Decline
                   </Button>
-                  <Link className="text-xs text-amber-300 self-center" href={`/tasks/${item.task_id ?? item.task?.id}`}>
+                  <Link className="text-xs text-amber-700 dark:text-amber-300 self-center" href={`/tasks/${item.task_id ?? item.task?.id}`}>
                     Open task
                   </Link>
                 </div>
@@ -149,7 +149,7 @@ export default function TasksPage() {
         </Card>
       )}
       <input
-        className="h-10 w-full max-w-md rounded-lg border border-white/10 bg-white/5 px-3 text-sm"
+        className="h-10 w-full max-w-md rounded-lg border border-border bg-foreground/5 px-3 text-sm"
         placeholder="Search tasks"
         value={search}
         onChange={(event) => setSearch(event.target.value)}
@@ -157,8 +157,8 @@ export default function TasksPage() {
       <Card>
         <CardTitle>All visible tasks</CardTitle>
         <div className="mt-4 space-y-2">
-          {isLoading && <p className="text-sm text-slate-400">Loading tasks…</p>}
-          {data?.data.length === 0 && <p className="text-sm text-slate-400">No tasks yet.</p>}
+          {isLoading && <p className="text-sm text-muted">Loading tasks…</p>}
+          {data?.data.length === 0 && <p className="text-sm text-muted">No tasks yet.</p>}
           {data?.data.map((task) => (
             <LiveTaskRow key={task.id} task={task} />
           ))}

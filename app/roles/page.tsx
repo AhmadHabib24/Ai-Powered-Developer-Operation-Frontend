@@ -104,17 +104,17 @@ export default function RolesPage() {
   return (
     <RequirePermission permission="roles.view">
       {roles.error || catalog.error ? (
-        <p className="text-rose-300">{apiErrorMessage(roles.error ?? catalog.error, "Unable to load roles.")}</p>
+        <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(roles.error ?? catalog.error, "Unable to load roles.")}</p>
       ) : roles.isLoading || catalog.isLoading ? (
-        <p className="text-slate-400">Loading roles…</p>
+        <p className="text-muted">Loading roles…</p>
       ) : !current ? (
-        <p className="text-slate-400">No roles yet.</p>
+        <p className="text-muted">No roles yet.</p>
       ) : (
         <div className="space-y-6">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Access control</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">Access control</p>
             <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Roles</h1>
-            <p className="mt-2 max-w-3xl text-sm text-slate-400">
+            <p className="mt-2 max-w-3xl text-sm text-muted">
               Sidebar links appear only when the matching view permission is on. Create, edit, and delete buttons follow the operation grants below.
             </p>
           </div>
@@ -126,11 +126,11 @@ export default function RolesPage() {
                   type="button"
                   onClick={() => setSelectedId(role.id)}
                   className={`w-full rounded-2xl border px-4 py-3 text-left ${
-                    role.id === current.id ? "border-amber-400/40 bg-amber-400/10" : "border-white/10 bg-slate-900/70"
+                    role.id === current.id ? "border-amber-400/40 bg-amber-400/10" : "border-border bg-card"
                   }`}
                 >
-                  <p className="font-medium text-white">{role.name}</p>
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="font-medium text-foreground">{role.name}</p>
+                  <p className="mt-1 text-xs text-muted">
                     {role.users_count ?? 0} people · {(role.permissions ?? []).length} grants
                     {role.is_system ? " · system" : ""}
                   </p>
@@ -150,7 +150,7 @@ export default function RolesPage() {
                 <div className="min-w-0 flex-1 space-y-3">
                   <Input value={name} onChange={(e) => setName(e.target.value)} disabled={!canManage} />
                   <textarea
-                    className="min-h-20 w-full rounded-lg border border-white/10 bg-white/5 p-3 text-sm"
+                    className="min-h-20 w-full rounded-lg border border-border bg-foreground/5 p-3 text-sm"
                     placeholder="What this role is for"
                     value={description}
                     disabled={!canManage}
@@ -173,16 +173,16 @@ export default function RolesPage() {
                 )}
               </div>
               {locked && (
-                <p className="rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-100">
+                <p className="rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-800 dark:text-amber-100">
                   Super Admin always keeps every permission so you cannot lock yourself out.
                 </p>
               )}
               <section className="space-y-3">
-                <h2 className="text-sm font-medium text-slate-300">Sidebar</h2>
-                <p className="text-xs text-slate-500">My work is always visible. Everything else follows these toggles.</p>
+                <h2 className="text-sm font-medium text-muted">Sidebar</h2>
+                <p className="text-xs text-muted">My work is always visible. Everything else follows these toggles.</p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {sidebarLinks.map((link) => (
-                    <label key={link.href} className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                    <label key={link.href} className="flex items-center gap-2 rounded-xl bg-foreground/5 px-3 py-2 text-sm text-foreground">
                       <input
                         type="checkbox"
                         className="accent-amber-400"
@@ -199,11 +199,11 @@ export default function RolesPage() {
                 const slugs = group.items.map((item) => item.slug);
                 const allOn = slugs.every((slug) => selected.has(slug));
                 return (
-                  <section key={group.group} className="space-y-3 border-t border-white/10 pt-4">
+                  <section key={group.group} className="space-y-3 border-t border-border pt-4">
                     <div className="flex items-center justify-between gap-3">
-                      <h2 className="text-sm font-medium text-slate-300">{group.label}</h2>
+                      <h2 className="text-sm font-medium text-muted">{group.label}</h2>
                       {canManage && !locked && (
-                        <button type="button" className="text-xs text-amber-300" onClick={() => toggleGroup(slugs, !allOn)}>
+                        <button type="button" className="text-xs text-amber-700 dark:text-amber-300" onClick={() => toggleGroup(slugs, !allOn)}>
                           {allOn ? "Clear group" : "Allow all"}
                         </button>
                       )}
@@ -212,7 +212,7 @@ export default function RolesPage() {
                       {group.items.map((item) => {
                         const nav = sidebarLabelForPermission(item.slug);
                         return (
-                          <label key={item.slug} className="flex items-start gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                          <label key={item.slug} className="flex items-start gap-2 rounded-xl bg-foreground/5 px-3 py-2 text-sm text-foreground">
                             <input
                               type="checkbox"
                               className="mt-1 accent-amber-400"
@@ -222,7 +222,7 @@ export default function RolesPage() {
                             />
                             <span>
                               <span className="block">{item.name}</span>
-                              <span className="block text-xs text-slate-500">
+                              <span className="block text-xs text-muted">
                                 {nav ? `Sidebar: ${nav}. ` : ""}
                                 {item.description}
                               </span>

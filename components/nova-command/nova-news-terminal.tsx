@@ -21,15 +21,15 @@ export function NovaNewsTerminal({ enabled, className }: { enabled: boolean; cla
       liveLabel={news.data?.source ? news.data.source : news.isFetching ? "sync" : "live"}
       className={cn("h-48", className)}
     >
-      {news.error && <p className="text-rose-300">{apiErrorMessage(news.error, "News uplink denied.")}</p>}
-      {news.data?.error && <p className="text-amber-200">{news.data.error}</p>}
+      {news.error && <p className="text-rose-700 dark:text-rose-300">{apiErrorMessage(news.error, "News uplink denied.")}</p>}
+      {news.data?.error && <p className="text-amber-800 dark:text-amber-200">{news.data.error}</p>}
       {(news.data?.items ?? []).map((item) => (
         <a
           key={item.id}
           href={item.url}
           target="_blank"
           rel="noreferrer"
-          className="block truncate text-amber-100 hover:text-white"
+          className="block truncate text-amber-800 dark:text-amber-100 hover:text-foreground"
         >
           <span className="text-amber-700">›</span> {item.points > 0 ? `${item.points}pts · ` : ""}
           {item.title}

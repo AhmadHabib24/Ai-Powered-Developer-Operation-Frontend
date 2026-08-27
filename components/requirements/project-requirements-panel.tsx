@@ -64,7 +64,7 @@ export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
   return (
     <Card>
       <CardTitle>Requirements</CardTitle>
-      <p className="mt-2 text-sm text-slate-400">
+      <p className="mt-2 text-sm text-muted">
         Upload PDF, DOCX, TXT, or MD. NORA drafts modules, features, stories, and tasks. Nothing is created until you approve.
       </p>
       {can("projects.update") && (
@@ -72,7 +72,7 @@ export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
           <input
             type="file"
             accept=".pdf,.docx,.txt,.md"
-            className="text-sm text-slate-300"
+            className="text-sm text-muted"
             onChange={(event) => setFile(event.target.files?.[0] ?? null)}
           />
           <Button size="sm" disabled={!file || upload.isPending} onClick={() => upload.mutate()}>
@@ -81,13 +81,13 @@ export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
         </div>
       )}
       <div className="mt-4 space-y-2">
-        {documents?.length === 0 && <p className="text-sm text-slate-400">No requirement documents yet.</p>}
+        {documents?.length === 0 && <p className="text-sm text-muted">No requirement documents yet.</p>}
         {documents?.map((document) => (
-          <div key={document.id} className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-sm">
+          <div key={document.id} className="flex items-center justify-between rounded-xl bg-foreground/5 px-3 py-2 text-sm">
             <div>
               <p className="font-medium">{document.original_name}</p>
-              <p className="text-xs text-slate-400">{document.extension} · {Math.round(document.size_bytes / 1024)} KB</p>
-              {document.extraction_error && <p className="mt-1 text-xs text-rose-300">{document.extraction_error}</p>}
+              <p className="text-xs text-muted">{document.extension} · {Math.round(document.size_bytes / 1024)} KB</p>
+              {document.extraction_error && <p className="mt-1 text-xs text-rose-700 dark:text-rose-300">{document.extraction_error}</p>}
             </div>
             <div className="flex items-center gap-2">
               <Badge tone={document.extraction_status === "ready" ? "green" : document.extraction_status === "failed" ? "red" : "yellow"}>
@@ -98,7 +98,7 @@ export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
                   Analyze
                 </Button>
               )}
-              <Link className="text-xs text-amber-300" href={`/projects/${projectId}/analyses`}>
+              <Link className="text-xs text-amber-700 dark:text-amber-300" href={`/projects/${projectId}/analyses`}>
                 Drafts
               </Link>
             </div>
