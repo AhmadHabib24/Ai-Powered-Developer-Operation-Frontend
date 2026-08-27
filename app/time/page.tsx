@@ -74,7 +74,7 @@ export default function TimePage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Time report</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Time report</p>
         <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Hours by task</h1>
         <p className="mt-2 max-w-2xl text-sm text-slate-400">
           This is not the task list. It shows who spent time where: averages, task totals, and the raw entries underneath.
@@ -154,7 +154,7 @@ export default function TimePage() {
                 <div className="text-right">
                   <p className="font-mono">{formatDuration(entry.billed_seconds)}</p>
                   {entry.adjustment_seconds !== 0 && (
-                    <p className="text-xs text-cyan-300">
+                    <p className="text-xs text-amber-300">
                       {entry.adjustment_seconds > 0 ? "+" : ""}
                       {formatDuration(Math.abs(entry.adjustment_seconds))} adjusted
                     </p>

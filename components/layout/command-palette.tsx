@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
+import { brandAssistantName } from "@/lib/brand";
 import { visibleNavLinks } from "@/lib/nav";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,7 +13,7 @@ export function CommandPalette() {
   const router = useRouter();
   const { can } = useAuth();
   const branding = useBranding();
-  const assistant = branding.data?.assistant_name ?? "NOVA";
+  const assistant = brandAssistantName(branding.data?.assistant_name);
 
   const commands = [
     ...visibleNavLinks(can).map((link) => ({

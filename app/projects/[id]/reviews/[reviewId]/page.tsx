@@ -86,7 +86,7 @@ export default function CodeReviewDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <Link href={`/projects/${params.id}/reviews`} className="text-sm text-cyan-300">
+          <Link href={`/projects/${params.id}/reviews`} className="text-sm text-amber-300">
             Back to reviews
           </Link>
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -120,7 +120,7 @@ export default function CodeReviewDetailPage() {
                 <label key={person.id} className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-sm">
                   <input
                     type="checkbox"
-                    className="accent-cyan-400"
+                    className="accent-amber-400"
                     checked={selected.includes(person.id)}
                     onChange={(event) => {
                       setSelected((current) =>
@@ -188,7 +188,7 @@ export default function CodeReviewDetailPage() {
               </p>
               {finding.why_it_matters && <p className="mt-2 text-sm text-slate-300">{finding.why_it_matters}</p>}
               {finding.recommendation && (
-                <p className="mt-1 text-sm text-cyan-100/90">Fix: {finding.recommendation}</p>
+                <p className="mt-1 text-sm text-amber-100/90">Fix: {finding.recommendation}</p>
               )}
             </div>
           ))}

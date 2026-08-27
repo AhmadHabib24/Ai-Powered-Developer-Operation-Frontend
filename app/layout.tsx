@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { Toaster } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
+import { BRAND } from "@/lib/brand";
 import { AuthProvider } from "@/providers/auth-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import "./globals.css";
@@ -9,8 +10,13 @@ import "./globals.css";
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 
 export const metadata: Metadata = {
-  title: "NOVA — Developer Operations",
-  description: "AI-powered developer operations and performance management",
+  title: `${BRAND.appName} — ${BRAND.tagline}`,
+  description: BRAND.tagline,
+  icons: {
+    icon: [{ url: BRAND.logo.icon, type: "image/png" }],
+    apple: BRAND.logo.icon,
+    shortcut: BRAND.logo.icon,
+  },
 };
 
 export const viewport: Viewport = {

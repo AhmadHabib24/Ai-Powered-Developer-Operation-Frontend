@@ -1,16 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #07111f;
-  --foreground: #e8eef7;
-  --card: #0d1b2e;
+  --background: #0b1220;
+  --foreground: #f9fafb;
+  --card: #1e293b;
   --muted: #94a3b8;
-  --accent: #22d3ee;
+  --accent: #f59e0b;
+  --accent-orange: #f97316;
+  --accent-red: #ef4444;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand: #f59e0b;
+  --color-brand-orange: #f97316;
+  --color-brand-red: #ef4444;
   --font-sans: var(--font-geist-sans);
 }
 
@@ -22,8 +27,9 @@ body {
   min-height: 100dvh;
   overflow-x: hidden;
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(34, 211, 238, 0.12), transparent 50%),
-    radial-gradient(800px 400px at 90% 0%, rgba(99, 102, 241, 0.12), transparent 45%),
+    radial-gradient(1100px 560px at 8% -12%, rgba(245, 158, 11, 0.16), transparent 52%),
+    radial-gradient(820px 420px at 92% 0%, rgba(239, 68, 68, 0.12), transparent 48%),
+    radial-gradient(700px 380px at 50% 110%, rgba(249, 115, 22, 0.08), transparent 50%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
@@ -38,9 +44,9 @@ svg {
 
 .nova-command-overlay {
   background:
-    radial-gradient(900px 500px at 70% 20%, rgba(34, 211, 238, 0.14), transparent 55%),
-    radial-gradient(700px 400px at 20% 80%, rgba(14, 116, 144, 0.18), transparent 50%),
-    #050b14;
+    radial-gradient(900px 500px at 70% 20%, rgba(245, 158, 11, 0.16), transparent 55%),
+    radial-gradient(700px 400px at 20% 80%, rgba(239, 68, 68, 0.12), transparent 50%),
+    #070b12;
 }
 
 .nova-command-overlay::before {
@@ -52,7 +58,7 @@ svg {
     180deg,
     transparent 0,
     transparent 2px,
-    rgba(34, 211, 238, 0.025) 3px
+    rgba(245, 158, 11, 0.03) 3px
   );
   z-index: 1;
 }
@@ -78,7 +84,7 @@ svg {
 }
 
 .nova-terminal {
-  box-shadow: inset 0 0 40px rgba(34, 211, 238, 0.08);
+  box-shadow: inset 0 0 40px rgba(245, 158, 11, 0.08);
 }
 
 @keyframes nova-float {
@@ -94,10 +100,10 @@ svg {
 @keyframes nova-orbit-pulse {
   0%,
   100% {
-    filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.2));
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.25));
   }
   50% {
-    filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.55));
+    filter: drop-shadow(0 0 16px rgba(249, 115, 22, 0.55));
   }
 }
 

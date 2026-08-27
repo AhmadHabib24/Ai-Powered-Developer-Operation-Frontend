@@ -67,10 +67,10 @@ export default function DeveloperHomePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Developer workspace</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Developer workspace</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Today’s work</h1>
         </div>
-        <Link className="text-sm text-cyan-300" href="/tasks">
+        <Link className="text-sm text-amber-300" href="/tasks">
           All tasks
         </Link>
       </div>
@@ -142,7 +142,7 @@ export default function DeveloperHomePage() {
           {data.tasks.in_progress.length === 0 && <p className="text-sm text-slate-400">Nothing in progress. Pick a task below.</p>}
           {data.tasks.in_progress.map((task) => (
             <div key={task.id} className="flex flex-col gap-3 rounded-xl bg-white/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-              <Link href={`/tasks/${task.id}`} className="font-medium hover:text-cyan-200">
+              <Link href={`/tasks/${task.id}`} className="font-medium hover:text-amber-200">
                 {task.title}
               </Link>
               <div className="flex flex-wrap items-center gap-2">
@@ -166,7 +166,7 @@ export default function DeveloperHomePage() {
           {data.tasks.recent.map((task) => (
             <div key={task.id} className="flex flex-col gap-3 rounded-xl bg-white/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <Link href={`/tasks/${task.id}`} className="font-medium hover:text-cyan-200">
+                <Link href={`/tasks/${task.id}`} className="font-medium hover:text-amber-200">
                   {task.title}
                 </Link>
                 <p className="text-xs text-slate-400">
@@ -205,7 +205,7 @@ export default function DeveloperHomePage() {
         <p className="mt-2 text-sm text-slate-400">
           Commits and PRs are matched to you by email or this username. Use the same login as GitHub.
         </p>
-        <p className="mt-2 text-sm text-cyan-200">
+        <p className="mt-2 text-sm text-amber-200">
           {identities?.[0]?.login ? `Linked as ${identities[0].login}` : "No GitHub login linked yet."}
         </p>
         <div className="mt-3 flex gap-2">

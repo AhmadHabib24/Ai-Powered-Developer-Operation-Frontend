@@ -92,12 +92,12 @@ export function ProjectGitPanel({ projectId }: { projectId: string }) {
         {github?.organization && (
           <p className="mt-2 text-sm text-slate-400">
             Company org{" "}
-            <a className="text-cyan-300 hover:text-cyan-200" href={github.organization_url ?? `https://github.com/${github.organization}`} target="_blank" rel="noreferrer">
+            <a className="text-amber-300 hover:text-amber-200" href={github.organization_url ?? `https://github.com/${github.organization}`} target="_blank" rel="noreferrer">
               {github.organization}
             </a>
-            . Developers push there. NOVA records commits and PRs after a repo is linked.{" "}
+            . Developers push there. NEXORA records commits and PRs after a repo is linked.{" "}
             {can("git.view") && (
-              <Link className="text-cyan-300 hover:text-cyan-200" href="/git">
+              <Link className="text-amber-300 hover:text-amber-200" href="/git">
                 Open all {github.organization} repositories
               </Link>
             )}
@@ -126,7 +126,7 @@ export function ProjectGitPanel({ projectId }: { projectId: string }) {
           <div className="mt-3 space-y-2">
             {repos.map((repo) => (
               <div key={repo.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm">
-                <a href={repo.html_url ?? "#"} className="hover:text-cyan-200" target="_blank" rel="noreferrer">
+                <a href={repo.html_url ?? "#"} className="hover:text-amber-200" target="_blank" rel="noreferrer">
                   {repo.full_name}
                 </a>
                 <Badge tone={repo.webhook_status === "active" ? "green" : "yellow"}>{repo.webhook_status ?? "pending"}</Badge>

@@ -48,7 +48,7 @@ export function AssignmentInboxModal() {
   return (
     <div className="fixed inset-0 z-[80] grid place-items-center bg-slate-950/80 p-4">
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-950 p-5 shadow-2xl">
-        <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">New assignment</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-amber-300">New assignment</p>
         <h2 className="mt-2 text-xl font-semibold text-white">A task was assigned to you</h2>
         <p className="mt-3 text-sm text-slate-300">{task.title}</p>
         <p className="mt-1 text-xs text-slate-400">

@@ -1,11 +1,13 @@
 "use client";
 
+import { BrandMark, BrandWordmark } from "@/components/brand/brand-mark";
 import { AppNav } from "@/components/layout/app-nav";
 import { useLayoutNav } from "@/components/layout/layout-nav-context";
 import { Button } from "@/components/ui/button";
 import { useNovaCommand } from "@/components/nova-command/nova-command-context";
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
+import { brandAppName, brandAssistantName } from "@/lib/brand";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -15,8 +17,8 @@ export function MobileDrawer() {
   const branding = useBranding();
   const { canEngage, setOpen } = useNovaCommand();
   const router = useRouter();
-  const appName = branding.data?.app_name ?? process.env.NEXT_PUBLIC_APP_NAME ?? "NOVA";
-  const assistant = branding.data?.assistant_name ?? "NOVA";
+  const appName = brandAppName(branding.data?.app_name);
+  const assistant = brandAssistantName(branding.data?.assistant_name);
 
   if (!menuOpen) return null;
 
@@ -28,11 +30,16 @@ export function MobileDrawer() {
           <div className="flex min-w-0 items-center gap-3">
             {branding.data?.logo_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={branding.data.logo_url} alt="" className="h-10 w-10 shrink-0 rounded-lg bg-white/5 object-contain" />
-            ) : null}
+              <img src={branding.data.logo_url} alt="" className="h-10 w-10 shrink-0 rounded-xl object-contain" />
+            ) : (
+              <BrandMark variant="dark" className="h-10 w-10 shrink-0 rounded-xl" />
+            )}
             <div className="min-w-0">
-              <p className="text-xs uppercase tracking-[0.24em] text-cyan-300">Operations</p>
-              <h1 className="mt-1 truncate text-xl font-semibold text-white">{appName}</h1>
+              <p className="text-[10px] uppercase tracking-[0.28em] text-amber-400">Operations</p>
+              <h1 className="mt-1 truncate text-lg">
+                <BrandWordmark />
+              </h1>
+              <p className="sr-only">{appName}</p>
             </div>
           </div>
           <Button variant="ghost" size="icon" aria-label="Close menu" onClick={() => setMenuOpen(false)}>

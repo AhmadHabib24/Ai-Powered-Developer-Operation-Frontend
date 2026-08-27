@@ -12,7 +12,7 @@ export function NovaTerminal({ enabled }: { enabled: boolean }) {
   const seen = useRef(new Set<number>());
   const booted = useRef(false);
   const [kernel] = useState(() => [
-    { id: -3, line: "NOVA kernel · mesh handshake" },
+    { id: -3, line: "NORA kernel · mesh handshake" },
     { id: -2, line: "uplink: org.audit · live" },
     { id: -1, line: "awaiting operator traffic" },
   ]);
@@ -42,12 +42,12 @@ export function NovaTerminal({ enabled }: { enabled: boolean }) {
       <div className="space-y-1">
         {feed.error && <p className="text-rose-300">{apiErrorMessage(feed.error, "Audit uplink denied.")}</p>}
         {events.map((item) => (
-          <p key={item.id} className={item.id < 0 ? "text-cyan-500/80" : "text-cyan-100"}>
-            <span className="text-cyan-700">›</span> {item.line}
+          <p key={item.id} className={item.id < 0 ? "text-amber-500/80" : "text-amber-100"}>
+            <span className="text-amber-700">›</span> {item.line}
           </p>
         ))}
         {(feed.data ?? []).length === 0 && !feed.error && (
-          <p className="text-cyan-700">No operator events yet. Timer starts, assignments, and project edits appear here as they happen.</p>
+          <p className="text-amber-700">No operator events yet. Timer starts, assignments, and project edits appear here as they happen.</p>
         )}
       </div>
     </MeshTerminal>

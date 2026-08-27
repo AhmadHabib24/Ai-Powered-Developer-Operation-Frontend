@@ -98,7 +98,7 @@ export function GitWorkspace() {
   function startReview(repo: GitOrgRepository, pullRequestNumber?: number) {
     const needsProject = !repo.linked;
     if (needsProject && !projectId) {
-      toast.error("Pick a NOVA project to link this repository, then run code review.");
+      toast.error("Pick a NEXORA project to link this repository, then run code review.");
       setOpenId(repo.external_id);
       return;
     }
@@ -118,7 +118,7 @@ export function GitWorkspace() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">GitHub</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">GitHub</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">{orgLabel}</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-400">
             Repositories come from Settings → GitHub ({org ? "live organization value" : "set the organization slug first"}
@@ -166,7 +166,7 @@ export function GitWorkspace() {
           <p className="mt-1 text-xs text-slate-500">Visible in {orgLabel}</p>
         </Card>
         <Card>
-          <CardTitle>Linked to NOVA</CardTitle>
+          <CardTitle>Linked to NEXORA</CardTitle>
           <p className="mt-2 text-3xl font-semibold text-white">{data.repositories.filter((repo) => repo.linked).length}</p>
           <p className="mt-1 text-xs text-slate-500">Ready for webhooks and history</p>
         </Card>
@@ -176,7 +176,7 @@ export function GitWorkspace() {
             {data.connected ? "GitHub account connected" : data.token_configured ? "Using Settings PAT" : "Not connected"}
           </p>
           {org && (
-            <a className="mt-2 inline-block text-sm text-cyan-300 hover:text-cyan-200" href={data.organization_url ?? "#"} target="_blank" rel="noreferrer">
+            <a className="mt-2 inline-block text-sm text-amber-300 hover:text-amber-200" href={data.organization_url ?? "#"} target="_blank" rel="noreferrer">
               github.com/{org}
             </a>
           )}
@@ -262,7 +262,7 @@ function RepoRow({
       <div className="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <a href={repo.html_url ?? "#"} className="font-medium hover:text-cyan-200" target="_blank" rel="noreferrer">
+            <a href={repo.html_url ?? "#"} className="font-medium hover:text-amber-200" target="_blank" rel="noreferrer">
               {repo.full_name}
             </a>
             <Badge tone={repo.private ? "yellow" : "green"}>{repo.private ? "private" : "public"}</Badge>
@@ -272,14 +272,14 @@ function RepoRow({
             {repo.linked_project ? (
               <>
                 Linked to{" "}
-                <Link className="text-cyan-300 hover:text-cyan-200" href={`/projects/${repo.linked_project.id}`}>
+                <Link className="text-amber-300 hover:text-amber-200" href={`/projects/${repo.linked_project.id}`}>
                   {repo.linked_project.name}
                 </Link>
                 {repo.reviews_count ? ` · ${repo.reviews_count} review(s)` : ""}
                 {repo.open_pull_requests ? ` · ${repo.open_pull_requests} stored open PR(s)` : ""}
               </>
             ) : (
-              "Not linked to a NOVA project yet"
+              "Not linked to a NEXORA project yet"
             )}
           </p>
         </div>
@@ -300,7 +300,7 @@ function RepoRow({
         <div className="space-y-3 border-t border-white/10 px-3 py-3">
           {!repo.linked && (
             <div className="space-y-2">
-              <p className="text-xs text-slate-400">Link this repository to a NOVA project so findings have a home.</p>
+              <p className="text-xs text-slate-400">Link this repository to a NEXORA project so findings have a home.</p>
               {canConnect ? (
                 <select
                   className="h-10 w-full rounded-lg border border-white/10 bg-slate-950 px-3 text-sm"

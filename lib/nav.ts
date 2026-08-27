@@ -33,7 +33,7 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/people", label: "People", icon: Users, permission: "users.view" },
   { href: "/roles", label: "Roles", icon: ShieldCheck, permission: "roles.view" },
   { href: "/performance", label: "Performance", icon: Trophy, permission: "performance.view" },
-  { href: "/nova", label: "Talk to NOVA", icon: MessageSquareText, permission: "ai.use" },
+  { href: "/nova", label: "Talk to NORA", icon: MessageSquareText, permission: "ai.use" },
   { href: "/settings", label: "Settings", icon: Settings, permission: "settings.manage" },
 ];
 
@@ -61,7 +61,7 @@ export function bottomNavItems(can: (permission: string) => boolean): NavLink[] 
     : { href: "/me", label: "Home", icon: Home };
   const shortcuts = BOTTOM_SHORTCUTS.map((href) => NAV_LINKS.find((link) => link.href === href)!)
     .filter((link) => !link.permission || can(link.permission))
-    .map((link) => (link.href === "/nova" ? { ...link, label: "NOVA" } : link));
+    .map((link) => (link.href === "/nova" ? { ...link, label: "NORA" } : link));
   return [home, ...shortcuts];
 }
 

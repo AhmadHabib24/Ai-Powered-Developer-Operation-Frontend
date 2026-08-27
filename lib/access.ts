@@ -12,7 +12,7 @@ export const PERMISSION_GROUP_LABELS: Record<string, string> = {
   review: "Code review",
   reports: "Command / reports",
   performance: "Performance",
-  ai: "NOVA",
+  ai: "NORA",
   audit: "Audit",
   notify: "Notifications",
   settings: "Settings",

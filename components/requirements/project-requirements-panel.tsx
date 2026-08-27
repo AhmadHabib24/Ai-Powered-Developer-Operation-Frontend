@@ -65,7 +65,7 @@ export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
     <Card>
       <CardTitle>Requirements</CardTitle>
       <p className="mt-2 text-sm text-slate-400">
-        Upload PDF, DOCX, TXT, or MD. NOVA drafts modules, features, stories, and tasks. Nothing is created until you approve.
+        Upload PDF, DOCX, TXT, or MD. NORA drafts modules, features, stories, and tasks. Nothing is created until you approve.
       </p>
       {can("projects.update") && (
         <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -98,7 +98,7 @@ export function ProjectRequirementsPanel({ projectId }: { projectId: string }) {
                   Analyze
                 </Button>
               )}
-              <Link className="text-xs text-cyan-300" href={`/projects/${projectId}/analyses`}>
+              <Link className="text-xs text-amber-300" href={`/projects/${projectId}/analyses`}>
                 Drafts
               </Link>
             </div>

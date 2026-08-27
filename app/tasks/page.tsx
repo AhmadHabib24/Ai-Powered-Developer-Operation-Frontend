@@ -56,7 +56,7 @@ function LiveTaskRow({ task }: { task: Task }) {
           {task.description ? ` · ${task.description}` : ""}
         </p>
         {task.latest_comment && (
-          <p className="mt-1 truncate text-xs text-cyan-200">
+          <p className="mt-1 truncate text-xs text-amber-200">
             {task.latest_comment.user?.name ?? "Someone"} commented {timeAgo(task.latest_comment.created_at)}: {task.latest_comment.body}
           </p>
         )}
@@ -116,7 +116,7 @@ export default function TasksPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Work</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Work</p>
         <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Tasks</h1>
         <p className="mt-2 max-w-2xl text-sm text-slate-400">
           Live work, comments, and files show here. Time reports stay on the Time page.
@@ -139,7 +139,7 @@ export default function TasksPage() {
                   <Button size="sm" variant="danger" disabled={review.isPending} onClick={() => review.mutate({ id: item.id, accept: false })}>
                     Decline
                   </Button>
-                  <Link className="text-xs text-cyan-300 self-center" href={`/tasks/${item.task_id ?? item.task?.id}`}>
+                  <Link className="text-xs text-amber-300 self-center" href={`/tasks/${item.task_id ?? item.task?.id}`}>
                     Open task
                   </Link>
                 </div>

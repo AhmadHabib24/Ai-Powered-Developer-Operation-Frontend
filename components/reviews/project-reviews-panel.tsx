@@ -29,12 +29,12 @@ export function ProjectReviewsPanel({ projectId }: { projectId: string }) {
     <Card>
       <div className="flex items-center justify-between gap-3">
         <CardTitle>AI code reviews</CardTitle>
-        <Link className="text-xs text-cyan-300" href={`/projects/${projectId}/reviews`}>
+        <Link className="text-xs text-amber-300" href={`/projects/${projectId}/reviews`}>
           All reviews
         </Link>
       </div>
       <p className="mt-2 text-sm text-slate-400">
-        Pushes and pull requests are reviewed against project rules. NOVA does not block merges unless a severity gate is on.
+        Pushes and pull requests are reviewed against project rules. NEXORA does not block merges unless a severity gate is on.
       </p>
       <div className="mt-4 space-y-2">
         {reviews?.length === 0 && <p className="text-sm text-slate-400">No reviews yet. Push to a linked repository or request one.</p>}

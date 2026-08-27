@@ -25,7 +25,7 @@ export default function ProjectAnalysesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <Link href={`/projects/${params.id}`} className="text-sm text-cyan-300">
+        <Link href={`/projects/${params.id}`} className="text-sm text-amber-300">
           Back to project
         </Link>
         <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Requirement drafts</h1>

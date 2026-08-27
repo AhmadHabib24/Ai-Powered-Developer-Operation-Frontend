@@ -1,8 +1,10 @@
 "use client";
 
+import { BrandMark } from "@/components/brand/brand-mark";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { brandAppName, BRAND } from "@/lib/brand";
 import { loginSchema } from "@/schemas/auth";
 import { login } from "@/services/auth";
 import { useAuth } from "@/providers/auth-provider";
@@ -25,7 +27,7 @@ export default function LoginPage() {
   const queryClient = useQueryClient();
   const { markSignedIn } = useAuth();
   const branding = useBranding();
-  const appName = branding.data?.app_name ?? "NOVA";
+  const appName = brandAppName(branding.data?.app_name);
   const form = useForm<FormValues>({ resolver: zodResolver(loginSchema) });
   const mutation = useMutation({
     mutationFn: (values: FormValues) => login(values.email, values.password),
@@ -45,15 +47,17 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto grid min-h-screen max-w-md place-items-center p-6">
-      <Card className="w-full space-y-6">
-        <div>
+      <Card className="w-full space-y-6 border-amber-400/20 bg-[#1e293b]/90 shadow-[0_0_60px_rgba(245,158,11,0.12)]">
+        <div className="text-center">
           {branding.data?.logo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={branding.data.logo_url} alt="" className="mb-4 h-12 w-12 rounded-lg object-contain bg-white/5" />
-          ) : null}
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">{appName}</p>
-          <h1 className="mt-2 text-2xl font-semibold text-white">Sign in to operations</h1>
-          <p className="mt-1 text-sm text-slate-400">CTO command center and developer workspace.</p>
+            <img src={branding.data.logo_url} alt="" className="mx-auto mb-4 h-16 w-16 rounded-2xl object-contain" />
+          ) : (
+            <BrandMark variant="wordmark" className="mx-auto mb-4 h-16 w-auto max-w-full" />
+          )}
+          <p className="text-[10px] uppercase tracking-[0.32em] text-amber-400">{BRAND.tagline}</p>
+          <h1 className="mt-2 text-2xl font-semibold text-white">Sign in to {appName}</h1>
+          <p className="mt-1 text-sm text-slate-400">Command center and developer workspace.</p>
         </div>
         <form className="space-y-4" onSubmit={form.handleSubmit((values) => mutation.mutate(values))}>
           <div>

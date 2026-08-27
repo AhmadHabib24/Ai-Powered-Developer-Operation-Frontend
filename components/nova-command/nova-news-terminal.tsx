@@ -29,14 +29,14 @@ export function NovaNewsTerminal({ enabled, className }: { enabled: boolean; cla
           href={item.url}
           target="_blank"
           rel="noreferrer"
-          className="block truncate text-cyan-100 hover:text-white"
+          className="block truncate text-amber-100 hover:text-white"
         >
-          <span className="text-cyan-700">›</span> {item.points > 0 ? `${item.points}pts · ` : ""}
+          <span className="text-amber-700">›</span> {item.points > 0 ? `${item.points}pts · ` : ""}
           {item.title}
         </a>
       ))}
       {news.isFetched && (news.data?.items ?? []).length === 0 && !news.data?.error && (
-        <p className="text-cyan-700">No headlines in the current Hacker News front page response.</p>
+        <p className="text-amber-700">No headlines in the current Hacker News front page response.</p>
       )}
     </MeshTerminal>
   );

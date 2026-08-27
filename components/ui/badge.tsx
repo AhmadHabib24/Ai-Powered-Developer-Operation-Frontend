@@ -6,7 +6,8 @@ const tones: Record<string, string> = {
   yellow: "bg-amber-400/15 text-amber-300",
   red: "bg-rose-400/15 text-rose-300",
   slate: "bg-white/10 text-slate-300",
-  cyan: "bg-cyan-400/15 text-cyan-300",
+  cyan: "bg-amber-400/15 text-amber-300",
+  gold: "bg-amber-400/15 text-amber-300",
 };
 
 export function Badge({

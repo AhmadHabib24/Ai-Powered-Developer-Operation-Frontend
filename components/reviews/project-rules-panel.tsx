@@ -55,7 +55,7 @@ export function ProjectRulesPanel({ projectId, project }: { projectId: string; p
     <Card>
       <CardTitle>Coding rules</CardTitle>
       <p className="mt-2 text-sm text-slate-400">
-        NOVA reviews pushes and pull requests against these rules. Findings are advisory unless you enable a merge gate.
+        NEXORA reviews pushes and pull requests against these rules. Findings are advisory unless you enable a merge gate.
       </p>
       {can("projects.update") && project && (
         <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">

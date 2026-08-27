@@ -4,6 +4,7 @@ import { visibleNavLinks } from "@/lib/nav";
 import { playNovaHover, playNovaSelect } from "@/lib/nova-audio";
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
+import { brandAssistantName } from "@/lib/brand";
 import { useEffect, useMemo, useRef } from "react";
 
 export function NovaGlobe({
@@ -14,7 +15,7 @@ export function NovaGlobe({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { user } = useAuth();
   const branding = useBranding();
-  const assistant = branding.data?.assistant_name ?? "NOVA";
+  const assistant = brandAssistantName(branding.data?.assistant_name);
   const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const nodes = useMemo(
@@ -46,12 +47,12 @@ export function NovaGlobe({
       ctx.scale(1, 0.28);
       ctx.beginPath();
       ctx.arc(0, 0, radius * 1.55, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(34,211,238,0.28)";
+      ctx.strokeStyle = "rgba(245,158,11,0.28)";
       ctx.lineWidth = 6;
       ctx.stroke();
       ctx.beginPath();
       ctx.arc(0, 0, radius * 1.2, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(34,211,238,0.18)";
+      ctx.strokeStyle = "rgba(245,158,11,0.18)";
       ctx.lineWidth = 2;
       ctx.stroke();
       ctx.restore();
@@ -59,9 +60,9 @@ export function NovaGlobe({
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       const glow = ctx.createRadialGradient(cx, cy, radius * 0.2, cx, cy, radius * 1.15);
-      glow.addColorStop(0, "rgba(8, 47, 73, 0.15)");
-      glow.addColorStop(0.7, "rgba(34, 211, 238, 0.08)");
-      glow.addColorStop(1, "rgba(34, 211, 238, 0)");
+      glow.addColorStop(0, "rgba(30, 41, 59, 0.15)");
+      glow.addColorStop(0.7, "rgba(245, 158, 11, 0.08)");
+      glow.addColorStop(1, "rgba(245, 158, 11, 0)");
       ctx.fillStyle = glow;
       ctx.fill();
 
@@ -72,7 +73,7 @@ export function NovaGlobe({
           if (lon === 0) ctx.moveTo(cx + x, cy + y);
           else if (z > -0.15) ctx.lineTo(cx + x, cy + y);
         }
-        ctx.strokeStyle = "rgba(34,211,238,0.22)";
+        ctx.strokeStyle = "rgba(245,158,11,0.22)";
         ctx.lineWidth = 1;
         ctx.stroke();
       }
@@ -101,7 +102,7 @@ export function NovaGlobe({
         const [x, y, z] = project(lat, lon, radius);
         if (z < 0.05) continue;
         const lit = i % 5 === 0;
-        ctx.fillStyle = lit ? "rgba(34,211,238,0.85)" : "rgba(186,230,253,0.35)";
+        ctx.fillStyle = lit ? "rgba(245,158,11,0.85)" : "rgba(186,230,253,0.35)";
         hex(ctx, cx + x, cy + y, lit ? 4.5 : 2.6);
       }
 
@@ -146,10 +147,10 @@ export function NovaGlobe({
                 onNavigate(node.href);
               }}
             >
-              <span className="grid h-11 w-11 place-items-center rounded-full border border-cyan-300/40 bg-slate-950/80 text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.35)]">
+              <span className="grid h-11 w-11 place-items-center rounded-full border border-amber-300/40 bg-slate-950/80 text-amber-200 shadow-[0_0_18px_rgba(245,158,11,0.35)]">
                 <Icon className="h-4 w-4" />
               </span>
-              <span className="max-w-[5.5rem] truncate rounded-full bg-slate-950/70 px-2 py-[2px] text-[10px] uppercase tracking-wide text-cyan-100">
+              <span className="max-w-[5.5rem] truncate rounded-full bg-slate-950/70 px-2 py-[2px] text-[10px] uppercase tracking-wide text-amber-100">
                 {node.label}
               </span>
             </button>
@@ -167,9 +168,9 @@ export function NovaGlobe({
                 playNovaSelect();
                 onNavigate(node.href);
               }}
-              className="flex min-w-0 flex-col items-center gap-1 rounded-xl border border-cyan-400/20 bg-slate-950/70 px-1 py-2 text-cyan-100"
+              className="flex min-w-0 flex-col items-center gap-1 rounded-xl border border-amber-400/20 bg-slate-950/70 px-1 py-2 text-amber-100"
             >
-              <Icon className="h-4 w-4 text-cyan-300" />
+              <Icon className="h-4 w-4 text-amber-300" />
               <span className="w-full truncate text-[9px] uppercase tracking-wide">{node.label}</span>
             </button>
           );

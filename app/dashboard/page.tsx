@@ -7,6 +7,8 @@ import { useNovaCommand } from "@/components/nova-command/nova-command-context";
 import { apiErrorMessage } from "@/lib/api";
 import { useAuth } from "@/providers/auth-provider";
 import { getCtoDashboard } from "@/services/dashboards";
+import { useBranding } from "@/hooks/use-branding";
+import { brandAssistantName } from "@/lib/brand";
 import { userCanOpenCommand } from "@/lib/nav";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -17,6 +19,8 @@ export default function CtoDashboardPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { setOpen, canEngage } = useNovaCommand();
+  const branding = useBranding();
+  const assistant = brandAssistantName(branding.data?.assistant_name);
   const { data, isLoading, error } = useQuery({
     queryKey: ["dashboard", "cto"],
     queryFn: getCtoDashboard,
@@ -36,19 +40,19 @@ export default function CtoDashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">CTO command center</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">CTO command center</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Today across the org</h1>
         </div>
         <div className="flex flex-wrap gap-2">
           {canEngage && (
             <Button variant="secondary" onClick={() => setOpen(true)}>
-              Engage NOVA
+              Engage {assistant}
             </Button>
           )}
           <Button variant="secondary" onClick={() => router.push("/performance")}>
             Performance
           </Button>
-          <Button onClick={() => router.push("/nova")}>Talk to NOVA</Button>
+          <Button onClick={() => router.push("/nova")}>Talk to {assistant}</Button>
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -87,7 +91,7 @@ export default function CtoDashboardPage() {
                 <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} allowDecimals={false} />
                 <Tooltip />
-                <Bar dataKey="total" fill="#22d3ee" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="total" fill="#F59E0B" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -104,7 +108,7 @@ export default function CtoDashboardPage() {
       <Card>
         <div className="mb-4 flex items-center justify-between">
           <CardTitle>Project health</CardTitle>
-          <Link className="text-sm text-cyan-300" href="/projects">
+          <Link className="text-sm text-amber-300" href="/projects">
             View all
           </Link>
         </div>

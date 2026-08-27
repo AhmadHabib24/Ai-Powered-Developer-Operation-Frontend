@@ -7,6 +7,7 @@ import { NovaTerminal } from "@/components/nova-command/nova-terminal";
 import { Button } from "@/components/ui/button";
 import { useNovaCommand } from "@/components/nova-command/nova-command-context";
 import { useBranding } from "@/hooks/use-branding";
+import { brandAssistantName } from "@/lib/brand";
 import { playNovaBoot, silenceNovaVoice, speakNova, startNovaDrone, stopNovaDrone, unlockNovaAudio } from "@/lib/nova-audio";
 import { cn } from "@/lib/utils";
 import { Volume2, VolumeX, X } from "lucide-react";
@@ -38,7 +39,7 @@ function useDesktopLayout() {
 export function NovaCommandOverlay() {
   const { setOpen, muted, toggleMuted } = useNovaCommand();
   const branding = useBranding();
-  const assistant = branding.data?.assistant_name ?? "NOVA";
+  const assistant = brandAssistantName(branding.data?.assistant_name);
   const router = useRouter();
   const desktop = useDesktopLayout();
   const [panel, setPanel] = useState<MobilePanel>("ops");
@@ -70,7 +71,7 @@ export function NovaCommandOverlay() {
     <div className="nova-command-overlay fixed inset-0 z-[80] flex h-dvh flex-col overflow-hidden">
       <div className="relative flex shrink-0 items-center justify-between gap-3 px-3 py-2 lg:px-6 lg:py-4">
         <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-300/80">Global mesh</p>
+          <p className="text-[10px] uppercase tracking-[0.35em] text-amber-300/80">Global mesh</p>
           <h2 className="truncate text-sm font-semibold text-white sm:text-lg">{assistant} command theater</h2>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -90,7 +91,7 @@ export function NovaCommandOverlay() {
           <NovaTerminal enabled />
           <div className="flex min-h-0 flex-col gap-4">
             <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
-              <p className="mb-2 text-center text-[10px] uppercase tracking-[0.3em] text-cyan-400/70">Tap a node to jump</p>
+              <p className="mb-2 text-center text-[10px] uppercase tracking-[0.3em] text-amber-400/70">Tap a node to jump</p>
               <NovaGlobe onNavigate={navigate} />
             </div>
             <NovaNewsTerminal enabled />
@@ -100,18 +101,18 @@ export function NovaCommandOverlay() {
       ) : (
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="max-h-[46%] shrink-0 overflow-y-auto">
-            <p className="mb-2 text-center text-[10px] uppercase tracking-[0.3em] text-cyan-400/70">Tap a node to jump</p>
+            <p className="mb-2 text-center text-[10px] uppercase tracking-[0.3em] text-amber-400/70">Tap a node to jump</p>
             <NovaGlobe onNavigate={navigate} />
           </div>
-          <div className="grid shrink-0 grid-cols-3 rounded-xl border border-cyan-400/20 bg-slate-950/60 p-1">
+          <div className="grid shrink-0 grid-cols-3 rounded-xl border border-amber-400/20 bg-slate-950/60 p-1">
             {MOBILE_PANELS.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => setPanel(item.id)}
                 className={cn(
-                  "rounded-lg px-2 py-2 text-[10px] uppercase tracking-[0.18em] text-cyan-500",
-                  panel === item.id && "bg-cyan-400/15 text-cyan-100",
+                  "rounded-lg px-2 py-2 text-[10px] uppercase tracking-[0.18em] text-amber-500",
+                  panel === item.id && "bg-amber-400/15 text-amber-100",
                 )}
               >
                 {item.label}

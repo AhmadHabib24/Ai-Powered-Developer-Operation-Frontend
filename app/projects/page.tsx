@@ -51,7 +51,7 @@ export default function ProjectsPage() {
       <div className="grid gap-4">
         {data?.data.map((project) => (
           <Link key={project.id} href={`/projects/${project.id}`}>
-            <Card className="flex flex-col gap-3 hover:border-cyan-400/30 sm:flex-row sm:items-center sm:justify-between">
+            <Card className="flex flex-col gap-3 hover:border-amber-400/30 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="text-lg font-medium">{project.name}</p>
                 <p className="text-sm text-slate-400">{project.description}</p>

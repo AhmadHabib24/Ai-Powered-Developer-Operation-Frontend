@@ -112,7 +112,7 @@ export default function RolesPage() {
       ) : (
         <div className="space-y-6">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Access control</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Access control</p>
             <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Roles</h1>
             <p className="mt-2 max-w-3xl text-sm text-slate-400">
               Sidebar links appear only when the matching view permission is on. Create, edit, and delete buttons follow the operation grants below.
@@ -126,7 +126,7 @@ export default function RolesPage() {
                   type="button"
                   onClick={() => setSelectedId(role.id)}
                   className={`w-full rounded-2xl border px-4 py-3 text-left ${
-                    role.id === current.id ? "border-cyan-400/40 bg-cyan-400/10" : "border-white/10 bg-slate-900/70"
+                    role.id === current.id ? "border-amber-400/40 bg-amber-400/10" : "border-white/10 bg-slate-900/70"
                   }`}
                 >
                   <p className="font-medium text-white">{role.name}</p>
@@ -173,7 +173,7 @@ export default function RolesPage() {
                 )}
               </div>
               {locked && (
-                <p className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-sm text-cyan-100">
+                <p className="rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-100">
                   Super Admin always keeps every permission so you cannot lock yourself out.
                 </p>
               )}
@@ -185,7 +185,7 @@ export default function RolesPage() {
                     <label key={link.href} className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
                       <input
                         type="checkbox"
-                        className="accent-cyan-400"
+                        className="accent-amber-400"
                         checked={selected.has(link.permission!)}
                         disabled={locked || !canManage}
                         onChange={(e) => toggle(link.permission!, e.target.checked)}
@@ -203,7 +203,7 @@ export default function RolesPage() {
                     <div className="flex items-center justify-between gap-3">
                       <h2 className="text-sm font-medium text-slate-300">{group.label}</h2>
                       {canManage && !locked && (
-                        <button type="button" className="text-xs text-cyan-300" onClick={() => toggleGroup(slugs, !allOn)}>
+                        <button type="button" className="text-xs text-amber-300" onClick={() => toggleGroup(slugs, !allOn)}>
                           {allOn ? "Clear group" : "Allow all"}
                         </button>
                       )}
@@ -215,7 +215,7 @@ export default function RolesPage() {
                           <label key={item.slug} className="flex items-start gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
                             <input
                               type="checkbox"
-                              className="mt-1 accent-cyan-400"
+                              className="mt-1 accent-amber-400"
                               checked={selected.has(item.slug)}
                               disabled={locked || !canManage}
                               onChange={(e) => toggle(item.slug, e.target.checked)}

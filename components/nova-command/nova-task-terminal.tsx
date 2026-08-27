@@ -16,16 +16,16 @@ function TaskLines({
 }) {
   return (
     <div className="space-y-1">
-      <p className="text-[10px] uppercase tracking-[0.18em] text-cyan-500">{heading}</p>
-      {rows.length === 0 && <p className="text-cyan-800">none</p>}
+      <p className="text-[10px] uppercase tracking-[0.18em] text-amber-500">{heading}</p>
+      {rows.length === 0 && <p className="text-amber-800">none</p>}
       {rows.map((task) => (
         <button
           key={`${heading}-${task.id}`}
           type="button"
           onClick={() => onOpen(task.id)}
-          className="block w-full truncate text-left text-cyan-100 hover:text-white"
+          className="block w-full truncate text-left text-amber-100 hover:text-white"
         >
-          <span className="text-cyan-700">›</span> {task.timer ? "TIMER " : ""}
+          <span className="text-amber-700">›</span> {task.timer ? "TIMER " : ""}
           {task.assignee ?? "unassigned"} · {task.title}
           {task.project ? ` · ${task.project}` : ""}
         </button>
@@ -49,7 +49,7 @@ export function NovaTaskTerminal({ enabled, onOpenTask }: { enabled: boolean; on
       {board.error && <p className="text-rose-300">{apiErrorMessage(board.error, "Task uplink denied.")}</p>}
       {data && (
         <div className="space-y-4">
-          <p className="text-cyan-500">
+          <p className="text-amber-500">
             {data.counts.timers} timer · {data.counts.working} in progress · {data.counts.pending} pending · {data.counts.blocked}{" "}
             blocked · {data.counts.done} done
           </p>

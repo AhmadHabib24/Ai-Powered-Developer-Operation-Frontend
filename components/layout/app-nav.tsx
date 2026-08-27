@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
+import { brandAssistantName } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 import { isNavActive, visibleNavLinks } from "@/lib/nav";
 import Link from "next/link";
@@ -11,7 +12,7 @@ export function AppNav({ onNavigate, className }: { onNavigate?: () => void; cla
   const pathname = usePathname();
   const { can } = useAuth();
   const branding = useBranding();
-  const assistant = branding.data?.assistant_name ?? "NOVA";
+  const assistant = brandAssistantName(branding.data?.assistant_name);
 
   return (
     <nav className={cn("flex flex-1 flex-col gap-1 overflow-y-auto", className)}>
@@ -25,7 +26,7 @@ export function AppNav({ onNavigate, className }: { onNavigate?: () => void; cla
             onClick={onNavigate}
             className={cn(
               "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-400 hover:bg-white/5 hover:text-white",
-              active && "bg-cyan-400/10 text-cyan-200",
+              active && "bg-amber-400/10 text-amber-200",
             )}
           >
             <link.icon className="h-4 w-4 shrink-0" />

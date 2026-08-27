@@ -4,6 +4,7 @@ import { NotificationBell } from "@/components/layout/notification-bell";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
 import { useBranding } from "@/hooks/use-branding";
+import { brandAppName, brandAssistantName } from "@/lib/brand";
 import { mobilePageTitle } from "@/lib/nav";
 import { Mic, Search } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -13,8 +14,8 @@ export function Topbar() {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
   const branding = useBranding();
-  const assistant = branding.data?.assistant_name ?? "NOVA";
-  const appName = branding.data?.app_name ?? process.env.NEXT_PUBLIC_APP_NAME ?? "NOVA";
+  const assistant = brandAssistantName(branding.data?.assistant_name);
+  const appName = brandAppName(branding.data?.app_name);
   const title = mobilePageTitle(pathname, appName, assistant);
 
   return (

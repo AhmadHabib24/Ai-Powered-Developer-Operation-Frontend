@@ -31,10 +31,10 @@ export function BottomNav() {
               href={item.href}
               className={cn(
                 "flex min-w-0 touch-manipulation flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-slate-400",
-                active && "text-cyan-300",
+                active && "text-amber-300",
               )}
             >
-              <item.icon className={cn("h-5 w-5", active && "text-cyan-300")} />
+              <item.icon className={cn("h-5 w-5", active && "text-amber-300")} />
               <span className="w-full truncate text-center">{item.label}</span>
             </Link>
           );
@@ -44,10 +44,10 @@ export function BottomNav() {
           onClick={toggleMenu}
           className={cn(
             "flex min-w-0 touch-manipulation flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-slate-400",
-            menuOpen && "text-cyan-300",
+            menuOpen && "text-amber-300",
           )}
         >
-          <Menu className={cn("h-5 w-5", menuOpen && "text-cyan-300")} />
+          <Menu className={cn("h-5 w-5", menuOpen && "text-amber-300")} />
           <span>Menu</span>
         </button>
       </div>

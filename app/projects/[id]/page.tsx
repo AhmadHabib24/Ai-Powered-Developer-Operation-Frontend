@@ -83,14 +83,14 @@ export default function ProjectDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Project</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Project</p>
           <h1 className="text-2xl font-semibold sm:text-3xl">{project.name}</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-400">{project.description}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {can("ai.use") && (
             <Button variant="secondary" asChild>
-              <Link href={`/nova?project_id=${project.id}`}>Talk to NOVA</Link>
+              <Link href={`/nova?project_id=${project.id}`}>Talk to NORA</Link>
             </Button>
           )}
           {can("projects.update") ? (
@@ -158,7 +158,7 @@ export default function ProjectDetailPage() {
           {tasks?.data.map((task) => (
             <div key={task.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white/5 px-4 py-3">
               <div>
-                <Link href={`/tasks/${task.id}`} className="font-medium hover:text-cyan-200">
+                <Link href={`/tasks/${task.id}`} className="font-medium hover:text-amber-200">
                   {task.title}
                 </Link>
                 <p className="text-xs text-slate-400">
@@ -166,7 +166,7 @@ export default function ProjectDetailPage() {
                   {task.assignment_status ? ` · ${task.assignment_status}` : ""}
                 </p>
                 {task.latest_comment && (
-                  <p className="mt-1 truncate text-xs text-cyan-200">{task.latest_comment.user?.name}: {task.latest_comment.body}</p>
+                  <p className="mt-1 truncate text-xs text-amber-200">{task.latest_comment.user?.name}: {task.latest_comment.body}</p>
                 )}
               </div>
               <div className="flex items-center gap-2">

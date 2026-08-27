@@ -111,7 +111,7 @@ export default function TaskDetailPage() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           {task.project && (
-            <Link href={`/projects/${task.project.id}`} className="text-sm text-cyan-300">
+            <Link href={`/projects/${task.project.id}`} className="text-sm text-amber-300">
               {task.project.name}
             </Link>
           )}
@@ -154,7 +154,7 @@ export default function TaskDetailPage() {
             <p className="mt-1 text-xs text-slate-400">Assigned by {task.assignment.assigned_by.name}</p>
           )}
           {task.suggested_assignee && (
-            <p className="mt-2 text-xs text-cyan-200">
+            <p className="mt-2 text-xs text-amber-200">
               Suggested {task.suggested_assignee.name}
               {task.assignment_confidence ? ` · ${task.assignment_confidence}` : ""}
             </p>

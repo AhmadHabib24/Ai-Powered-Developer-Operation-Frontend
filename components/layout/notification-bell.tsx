@@ -65,7 +65,7 @@ export function NotificationBell() {
       <Button variant="ghost" size="icon" aria-label="Notifications" onClick={() => setOpen((value) => !value)}>
         <Bell className="h-4 w-4" />
         {unread > 0 && (
-          <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-cyan-400 px-1 text-[10px] font-semibold text-slate-950">
+          <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-amber-400 px-1 text-[10px] font-semibold text-slate-950">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
@@ -73,7 +73,7 @@ export function NotificationBell() {
       {open && (
         <div className="absolute right-0 z-50 mt-2 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl max-sm:fixed max-sm:left-3 max-sm:right-3 max-sm:top-14 max-sm:mt-0 max-sm:w-auto">
           <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-300">Notifications</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-amber-300">Notifications</p>
             {unread > 0 && (
               <button type="button" className="text-[11px] text-slate-400 hover:text-white" onClick={() => readAll.mutate()}>
                 Mark all read

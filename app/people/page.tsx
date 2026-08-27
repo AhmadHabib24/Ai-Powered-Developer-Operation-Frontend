@@ -287,7 +287,7 @@ export default function PeoplePage() {
                     variant="danger"
                     disabled={remove.isPending}
                     onClick={() => {
-                      if (window.confirm(`Remove ${person.name} from NOVA? They will no longer be able to sign in.`)) {
+                      if (window.confirm(`Remove ${person.name} from NEXORA? They will no longer be able to sign in.`)) {
                         remove.mutate(person.id);
                       }
                     }}

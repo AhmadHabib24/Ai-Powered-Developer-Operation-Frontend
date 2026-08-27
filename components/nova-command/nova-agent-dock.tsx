@@ -1,7 +1,9 @@
 "use client";
 
+import { BrandMark } from "@/components/brand/brand-mark";
 import { useNovaCommand } from "@/components/nova-command/nova-command-context";
 import { useBranding } from "@/hooks/use-branding";
+import { brandAssistantName } from "@/lib/brand";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "nova_engage_dock";
@@ -35,7 +37,7 @@ function clampPos(pos: DockPos, width: number, height: number): DockPos {
 export function NovaAgentDock() {
   const { open, setOpen, canEngage } = useNovaCommand();
   const branding = useBranding();
-  const assistant = branding.data?.assistant_name ?? "NOVA";
+  const assistant = brandAssistantName(branding.data?.assistant_name);
   const dockRef = useRef<HTMLButtonElement>(null);
   const posRef = useRef<DockPos | null>(null);
   const dragRef = useRef<{
@@ -136,7 +138,7 @@ export function NovaAgentDock() {
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
-      className="nova-agent-dock group fixed right-3 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] z-40 touch-none select-none rounded-2xl border border-cyan-400/20 bg-slate-950/80 px-3 py-2 text-left shadow-[0_0_40px_rgba(34,211,238,0.18)] backdrop-blur-md lg:bottom-5 lg:right-5 lg:px-4 lg:py-3"
+      className="nova-agent-dock group fixed right-3 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] z-40 touch-none select-none rounded-2xl border border-amber-400/25 bg-[#070b12]/90 px-3 py-2 text-left shadow-[0_0_40px_rgba(245,158,11,0.22)] backdrop-blur-md lg:bottom-5 lg:right-5 lg:px-4 lg:py-3"
       style={
         pos
           ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto", cursor: dragging ? "grabbing" : "grab" }
@@ -144,12 +146,12 @@ export function NovaAgentDock() {
       }
       aria-label={`Engage ${assistant}. Drag to move.`}
     >
-      <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-cyan-300">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-300" />
+      <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-amber-300">
+        <BrandMark variant="nora" className="h-6 w-6 rounded-full" />
         Engage
       </span>
       <span className="mt-1 block text-sm font-medium text-white">{assistant} mesh</span>
-      <span className="hidden text-[11px] text-slate-400 group-hover:text-cyan-200 lg:block">Drag anywhere · click to open</span>
+      <span className="hidden text-[11px] text-slate-400 group-hover:text-amber-200 lg:block">Drag anywhere · click to open</span>
     </button>
   );
 }

@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
           <Input type="email" placeholder="you@company.com" {...form.register("email")} />
           <Button className="w-full">Send reset link</Button>
         </form>
-        <Link className="text-sm text-cyan-300" href="/login">
+        <Link className="text-sm text-amber-300" href="/login">
           Back to sign in
         </Link>
       </Card>

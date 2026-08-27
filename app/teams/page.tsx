@@ -247,7 +247,7 @@ export default function TeamsPage() {
                       <li key={member.id} className="flex items-center justify-between gap-2 rounded-lg bg-white/5 px-3 py-2">
                         <span>
                           {member.name}
-                          {team.lead?.id === member.id ? <span className="ml-2 text-xs text-cyan-300">lead</span> : null}
+                          {team.lead?.id === member.id ? <span className="ml-2 text-xs text-amber-300">lead</span> : null}
                         </span>
                         <Button
                           size="sm"

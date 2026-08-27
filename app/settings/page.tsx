@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const controlClass =
-  "flex min-h-10 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50";
+  "flex min-h-10 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50";
 
 function draftFromCatalog(catalog: SettingsCatalog): Record<string, string | number | boolean> {
   const next: Record<string, string | number | boolean> = {};
@@ -53,7 +53,7 @@ function FieldControl({
           type="checkbox"
           checked={Boolean(value)}
           onChange={(event) => onChange(event.target.checked)}
-          className="h-4 w-4 accent-cyan-400"
+          className="h-4 w-4 accent-amber-400"
         />
         Enabled
       </label>
@@ -174,7 +174,7 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Organization</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Organization</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Settings</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-400">
             Overrides live in the database (encrypted). They sit on top of <code className="text-slate-300">.env</code>. APP_KEY and
@@ -193,7 +193,7 @@ export default function SettingsPage() {
               type="button"
               onClick={() => setGroupId(group.id)}
               className={`w-full rounded-lg px-3 py-2 text-left text-sm ${
-                activeGroup.id === group.id ? "bg-cyan-400/10 text-cyan-100" : "text-slate-400 hover:bg-white/5"
+                activeGroup.id === group.id ? "bg-amber-400/10 text-amber-100" : "text-slate-400 hover:bg-white/5"
               }`}
             >
               {group.title}
@@ -205,9 +205,9 @@ export default function SettingsPage() {
             <CardTitle className="text-base text-white">{activeGroup.title}</CardTitle>
             <p className="mt-1 text-sm text-slate-400">{activeGroup.description}</p>
             {activeGroup.id === "git" && (
-              <p className="mt-2 text-sm text-cyan-200">
+              <p className="mt-2 text-sm text-amber-200">
                 Organization, OAuth, and token values on this screen are what the{" "}
-                <a href="/git" className="underline hover:text-cyan-100">
+                <a href="/git" className="underline hover:text-amber-100">
                   Git workspace
                 </a>{" "}
                 uses to list repos and start code reviews.

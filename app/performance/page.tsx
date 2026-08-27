@@ -101,7 +101,7 @@ export default function PerformancePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Evidence ledger</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-amber-300">Evidence ledger</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Performance</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-400">
             Points are append-only. Scores are a 0–100 rollup of delivery, punctuality, review hygiene, and ledger points. Commit count is never the only input.
@@ -143,7 +143,7 @@ export default function PerformancePage() {
                 <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} domain={[0, 100]} />
                 <Tooltip />
-                <Bar dataKey="score" fill="#22d3ee" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="score" fill="#F59E0B" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

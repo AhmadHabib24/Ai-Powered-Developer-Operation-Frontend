@@ -67,7 +67,7 @@ export default function AnalysisReviewPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <Link href={`/projects/${params.id}`} className="text-sm text-cyan-300">
+          <Link href={`/projects/${params.id}`} className="text-sm text-amber-300">
             Back to project
           </Link>
           <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Review requirement draft</h1>
@@ -89,7 +89,7 @@ export default function AnalysisReviewPage() {
               <p className="font-medium">{module.name}</p>
               {module.features.map((feature) => (
                 <div key={feature.name} className="mt-2 pl-3">
-                  <p className="text-cyan-200">{feature.name}</p>
+                  <p className="text-amber-200">{feature.name}</p>
                   {feature.stories.map((story) => (
                     <div key={story.title} className="mt-1 pl-3 text-slate-300">
                       <p>{story.title}</p>
